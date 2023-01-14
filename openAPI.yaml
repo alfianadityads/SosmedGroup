@@ -1,0 +1,39 @@
+openapi: 3.0.3
+info:
+  title: Sosmed Apps
+  description: This is API for Group Project By Alterra Academy
+  version: "1.0.0"
+  contact:
+    email: 
+  license:
+    name: Apache 2.0
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+tags:
+  - name: register
+    description: Endpoint for user registration
+  - name: login
+    description: Endpoint for verifying who a user is
+  - name: logout
+  - name: users
+    description: Endpoint for perform operations on user
+  - name: home
+    description: Endpoint to perform operations on posts
+  - name: comment
+    description: Endpoint to perform operations on comment
+servers:
+  - url: link will be updated soon
+    description: link for testing
+  - url: link will be updated soon
+    description: primarry link
+
+paths:
+  /register:
+    post:
+      tags:
+        - register
+      description: feature for user registration
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
