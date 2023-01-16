@@ -17,7 +17,7 @@ func main() {
 	db := config.InitDB(*cfg)
 
 	// gunakan migrate
-	// config.Migrate(db)
+	config.Migrate(db)
 
 	// gunakan New dari method user
 	usrData := uData.New(db)
