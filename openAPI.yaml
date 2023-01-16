@@ -22,8 +22,6 @@ tags:
     description: Endpoint to perform operations on comment
 servers:
   - url: link will be updated soon
-    description: link for testing
-  - url: link will be updated soon
     description: primarry link
 
 paths:
@@ -211,7 +209,7 @@ paths:
         500:
           $ref: '#/components/responses/500'
 
-  /contents/:id_content:
+  /contents/{id_content}:
     put:
       tags:
         - content
@@ -429,12 +427,12 @@ paths:
       security: 
         - JWTAuth: []
       parameters:
-        - name: id_content
-          description: "id content"
+        - name: id_comment
+          description: "id_comment"
           required: true
           in: path
           schema:
-            description: "id content"
+            description: "id_comment"
             type: integer
             example: 1
       responses:
