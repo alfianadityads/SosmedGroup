@@ -20,7 +20,7 @@ func InitDB(dc DBConfig) *gorm.DB {
 	return db
 }
 
-func Migrate(db *gorm.DB) {
-	db.AutoMigrate(userdata.Users{})
-	db.AutoMigrate(postdata.Posts{})
-}
+// func Migrate(db *gorm.DB) {
+// 	db.AutoMigrate(userdata.Users{})
+// 	db.AutoMigrate(postdata.Posts{})
+// }
