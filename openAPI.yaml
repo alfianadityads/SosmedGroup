@@ -50,10 +50,10 @@ paths:
                   type: string
                   format: password
             example:
-              name: Alfian
-              username: alfianad11
-              email: alfianadityadwi@gmail.com
-              password: alfian1234
+              name: "Alfian"
+              username: "alfianad11"
+              email: "alfianadityadwi@gmail.com"
+              password: "alfian1234"
       responses:
         201: 
           description: "success insert data"
@@ -88,6 +88,9 @@ paths:
                 password:
                   type: string
                   format: password
+              example: 
+                username: "alfianad11"
+                passwoord: "alfian1234"
       responses:
         200:
           description: "success login"
@@ -119,17 +122,29 @@ paths:
               properties:
                 name:
                   type: string
+                username:
+                  type: string
                 date_of_birth:
                   type: string
-                emai:
+                email:
                   type: string
                   format: email
+                bio:
+                  type: string
                 password:
                   type: string
                   format: password
                 image:
                   type: string
                   format: binary
+            example: 
+              name: "albert"
+              username: "albertenst"
+              date_of_birh: "1995-8-23"
+              bio: "Hello, my name is albert"
+              email: "albertxxx@gmail.com"
+              password: "secret"
+              image: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673881607/go-cloudinary/llhltxp55elirjkmlyld.png"
       responses:
         201:
           description: update success
@@ -194,7 +209,7 @@ paths:
                       id_user: 1,
                       bio: "Hello my name Alfian Aditya",
                       username: "alfian2316",
-                      profilepicture: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2306%3A40%3A47.jpg",
+                      profilepicture: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673881607/go-cloudinary/llhltxp55elirjkmlyld.png",
                         content:
                           {
                             id_content: 1,
@@ -202,15 +217,15 @@ paths:
                             image: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2006%3A40%3A47.jpg",
                             create_at: "2023-01-16 13:56:42.368",
                             username: "alfian2316",
-                            profilepicture: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2306%3A40%3A47.jpg"
+                            profilepicture: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673881607/go-cloudinary/llhltxp55elirjkmlyld.png"
                           },
                           {
                             id_content: 2,
                             content: "Good coffe = Good mood!",
-                            image: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2006%3A40%3A47.jpg",
+                            image: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673892611/go-cloudinary/gxjitapwl7pjcgskb3ph.jpg",
                             create_at: "2023-01-16 15:30:42.368",
                             username: "alfian2316",
-                            profilepicture: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2326%3A40%3A47.jpg"
+                            profilepicture: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673892611/go-cloudinary/gxjitapwl7pjcgskb3ph.jpg"
                           }
                     }
                   message: "success show profile"
@@ -239,6 +254,9 @@ paths:
                 image:
                   type: string
                   format: binary
+            example: 
+              content: "Beautiful day"
+              image: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673881607/go-cloudinary/llhltxp55elirjkmlyld.png"
                 
       responses:
         201:
@@ -271,17 +289,17 @@ paths:
                     - id_content: 1,
                       id_user: 1,
                       content: "This morning I make good scramble egg for breakfast. Yumm!"
-                      image: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2006%3A40%3A47.jpg"
+                      image: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673881607/go-cloudinary/llhltxp55elirjkmlyld.png"
                       create_at: "2023-01-16 13:56:42.368"
                       username: "alfian2316"
-                      profilepicture: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2306%3A40%3A47.jpg"
+                      profilepicture: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673881607/go-cloudinary/llhltxp55elirjkmlyld.png"
                     - id_content: 2,
                       id_user: 2,
                       content: "BBQ TIME!"
-                      image: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2006%3A40%3A47.jpg"
+                      image: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673892611/go-cloudinary/gxjitapwl7pjcgskb3ph.jpg"
                       create_at: "2023-01-16 13:56:42.368"
                       username: "alfian2316"
-                      profilepicture: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2306%3A40%3A47.jpg"
+                      profilepicture: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673892611/go-cloudinary/gxjitapwl7pjcgskb3ph.jpg"
                   message: "success show detail content"
         400:
           $ref: '#/components/responses/400'
@@ -317,6 +335,9 @@ paths:
                 image:
                   type: string
                   format: binary
+            example: 
+              content: "Good tea in the morning"
+              image: ""
       responses:
         200:
           description: update content success
@@ -387,17 +408,17 @@ paths:
                     {
                     id_content: 1,
                     content: "This morning I make good scramble egg for breakfast. Yumm!",
-                    image: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2006%3A40%3A47.jpg",
+                    image: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673892611/go-cloudinary/gxjitapwl7pjcgskb3ph.jpg",
                     create_at: "2023-01-16 13:56:42.368",
                     username: "alfian2316",
-                    profilepicture: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2306%3A40%3A47.jpg",
+                    profilepicture: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673892611/go-cloudinary/gxjitapwl7pjcgskb3ph.jpg",
                       comment:
                           {
                           id_comment: 1,
                           comment: "Happy holiday",
                           id_user: 2,
                           username: fatmakima,
-                          profilepicture: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2566%3A40%3A47.jpg"
+                          profilepicture: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673892611/go-cloudinary/gxjitapwl7pjcgskb3ph.jpg"
                           }
                       }
                   message: "success show detail content"
@@ -430,6 +451,8 @@ paths:
             schema:
               type: object
               example: 1
+            example: 
+              comment: "Hello hannah! Long time no see"
       responses:
         201: 
           description: "succes create comment"
@@ -438,7 +461,6 @@ paths:
               schema:
                 type: object
                 example:
-                  response data:
                     message: "succes create comment"
         400:
           $ref: '#/components/responses/400'
@@ -470,7 +492,6 @@ paths:
               schema:
                 type: object
                 example:
-                  status: "success"
                   message: "delete comment success"
         400:
           $ref: '#/components/responses/400'
