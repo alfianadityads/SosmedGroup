@@ -66,7 +66,7 @@ paths:
               example:
                 message: "success add data"
         400:
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/400'
         500:
           $ref: '#/components/responses/500'
 
@@ -101,25 +101,14 @@ paths:
                   id: 1
                   email: "emailex@example.com"
                   token: "632n87129n1"
-                  message: "login success"
-        404:
-          description: input data error from user
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-              example:
-                message: "data not found"
+                message: "login success"
         400:
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/400'
         500:
           $ref: '#/components/responses/500'
     
   /users:
-    patch:
+    put:
       tags:
         - users
       summary: update data user
@@ -138,7 +127,7 @@ paths:
                 email: fauzilax@gmail.com
                 password: "secretpass"
       responses:
-        200:
+        201:
           description: update success
           content:
             application/json:
@@ -148,7 +137,7 @@ paths:
                 status: "success"
                 message: "update data success"
         400:
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/400'
         500:
           $ref: '#/components/responses/500'
 
@@ -170,14 +159,14 @@ paths:
                   status: "success"
                   message: "delete data user success"
         400:
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/400'
         500:
           $ref: '#/components/responses/500'
 
   /contents:
     post:
       tags:
-        - contents
+        - content
       summary: add content to user
       description: adding content post to user
       security:
@@ -185,32 +174,48 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
-              example:
-                content: "This morning I make good scramble egg for breakfast. Yumm!"
-                image: "www.insta.com"
+              properties:
+                content:
+                  type: string
+                image:
+                  type: string
+                  format: binary
+                
       responses:
         201:
-          description: success add content
+          description: success create content
           content:
             application/json:
               schema:
                 type: object
-                example:
-                  status: "success"
-                  message: "success add content"
+                example: 
+                  respon data:
+                    description: "success create content"
+                    value :
+                      {
+                      id_content: 1,
+                      content: "This morning I make good scramble egg for breakfast. Yumm!",
+                      image: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2006%3A40%3A47.jpg",
+                      create_at: "2023-01-16 13:56:42.368",
+                        user:
+                          {
+                          id_user: 2,
+                          username: fatmakima
+                          }
+                      }
         400:
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/400'
         500:
           $ref: '#/components/responses/500'
 
-  /contents/{id_content}:
-    patch:
+  /contents/:id_content:
+    put:
       tags:
         - content
-      summary: edit or update content from post
+      summary: edit content from post
       description: edit content from user post
       security:
         - JWTAuth: []
@@ -226,12 +231,15 @@ paths:
       requestBody:
         required: true
         content: 
-          application/json:
+          multipart/form-data:
             schema:
               type: object
-              example:
-                content: "This morning I woke up at 7 am and made breakfast. What a great day"
-                image: "www.insta.com"
+              properties:
+                content:
+                  type: string
+                image:
+                  type: string
+                  format: binary
       responses:
         200:
           description: update content success
@@ -240,10 +248,23 @@ paths:
               schema:
                 $ref: '#/components/schemas/responseObject'
               example:
-                status: "success"
-                message: "update content success"
+                respon data:
+                    description: "success create content"
+                    value :
+                      {
+                      id_content: 1,
+                      content: "Today is beautiful day. Amazing!",
+                      image: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2006%3A40%3A47.jpg",
+                      create_at: "2023-01-16 13:56:42.368",
+                      update_at: "2023-01-16 14:15:42.368",
+                        user:
+                          {
+                          id_user: 2,
+                          username: fatmakima
+                          }
+                      }
         400:
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/400'
         500:
           $ref: '#/components/responses/500'
 
@@ -274,15 +295,15 @@ paths:
                   status: "success"
                   message: "success delete content from user post"
         400:
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/400'
         500:
           $ref: '#/components/responses/500'
 
     get:
       tags:
         - content
-      summary: get content user by id user
-      description: show data content from id user
+      summary: show detail content
+      description: show detail data content
       parameters:
         - name: id_content
           description: "id content"
@@ -294,23 +315,31 @@ paths:
             example: 1
       responses:
         200:
-          description: success show data content from id user
+          description: success show detail content
           content:
             application/json:
               schema:
                 type: object
                 example:
-                  status: "success"
-                  message: "success show content by user id"
-                  data:
-                    id: 1
-                    content: "This morning I woke up at 7 am and made breakfast. What a great day"
-                    image: "www.insta.com"
+                  respon data:
+                    description: "success show detail content"
+                    value :
+                      {
+                      id_content: 1,
+                      content: "This morning I make good scramble egg for breakfast. Yumm!",
+                      image: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2006%3A40%3A47.jpg",
+                      create_at: "2023-01-16 13:56:42.368",
+                      update_at: "2023-01-16 14:15:42.368",
+                        user:
+                          {
+                          id_user: 2,
+                          username: fatmakima
+                          }
+                      }
         400:
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/400'
         500:
           $ref: '#/components/responses/500'
-
 
   /comment/{id_content}:
     post:
@@ -335,23 +364,63 @@ paths:
           application/json:
             schema:
               type: object
-              example: 
-                comment: "Hello Hannah, your dress is beautiful today."
+              example: 1
       responses:
         201: 
-          description: "post comment succes"
+          description: "succes create comment"
           content:
             application/json:
               schema:
                 type: object
                 example:
-                  status: "success"
-                  message: "add comment successfully"
+                  response data:
+                    description: "succes create comment"
+                    value:
+                      {
+                      id_content: 2,
+                      username: "hannah7381",
+                      comment: "Hello Hannah, your dress is beautiful today.",
+                      create_at: "2023-01-16 14:26:42.368"
+                      }
         400:
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/400'
         500:
           $ref: '#/components/responses/500'
 
+    get:
+      tags:
+        - content
+      summary: show all contents
+      description: "showing all contents"
+      responses:
+        200:
+          description: success show detail content
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  respon data:
+                    description: "success show detail content"
+                    value :
+                      {
+                      id_content: 1,
+                      content: "This morning I make good scramble egg for breakfast. Yumm!",
+                      image: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2006%3A40%3A47.jpg",
+                      create_at: "2023-01-16 13:56:42.368",
+                      update_at: "2023-01-16 14:15:42.368",
+                        user:
+                          {
+                          id_user: 2,
+                          username: fatmakima
+                          }
+                      }
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: '#/components/responses/500'
+
+  /delete/{id_comment}:
     delete:
       tags:
         - comment
@@ -379,7 +448,7 @@ paths:
                   status: "success"
                   message: "delete comment success"
         400:
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/400'
         500:
           $ref: '#/components/responses/500'
 
