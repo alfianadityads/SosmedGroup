@@ -21,6 +21,9 @@ tags:
   - name: comment
     description: Endpoint to perform operations on comment
 servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/icxz1/SosmedAPI/1.0.0
   - url: link will be updated soon
     description: primarry link
 
@@ -62,7 +65,7 @@ paths:
                   message:
                     type: string
               example:
-                message: "success add data"
+                message: "Success create data"
         400:
           $ref: '#/components/responses/400'
         500:
@@ -80,25 +83,19 @@ paths:
             schema:
               type: object
               properties:
-                email:
+                username:
                   type: string
-                  format: email
                 password:
                   type: string
                   format: password
-
       responses:
         200:
-          description: success login
+          description: "success login"
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/responseObject'
               example:
-                data: 
-                  id: 1
-                  email: "emailex@example.com"
-                  token: "632n87129n1"
                 message: "login success"
         400:
           $ref: '#/components/responses/400'
@@ -116,14 +113,23 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
-              example:
-                name: fauzi 
-                date_of_birth: "1996-01-15"
-                email: fauzilax@gmail.com
-                password: "secretpass"
+              properties:
+                name:
+                  type: string
+                date_of_birth:
+                  type: string
+                emai:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                image:
+                  type: string
+                  format: binary
       responses:
         201:
           description: update success
@@ -132,7 +138,6 @@ paths:
               schema:
                 type: object
               example:
-                status: "success"
                 message: "update data success"
         400:
           $ref: '#/components/responses/400'
@@ -154,8 +159,61 @@ paths:
               schema:
                 type: object
                 example:
-                  status: "success"
                   message: "delete data user success"
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: '#/components/responses/500'
+
+    get:
+      tags: 
+        - users
+      summary: get data user by id user
+      description: getting data user by id user
+      security: 
+        - JWTAuth: []
+      parameters:
+        - name: id_user
+          description: "id user"
+          required: true
+          in: path
+          schema:
+            description: "id user"
+            type: integer
+            example: 1
+      responses:
+        200:
+          description: success show profile
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    {
+                      id_user: 1,
+                      bio: "Hello my name Alfian Aditya",
+                      username: "alfian2316",
+                      profilepicture: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2306%3A40%3A47.jpg",
+                        content:
+                          {
+                            id_content: 1,
+                            content: "This morning I make good scramble egg for breakfast. Yumm!",
+                            image: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2006%3A40%3A47.jpg",
+                            create_at: "2023-01-16 13:56:42.368",
+                            username: "alfian2316",
+                            profilepicture: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2306%3A40%3A47.jpg"
+                          },
+                          {
+                            id_content: 2,
+                            content: "Good coffe = Good mood!",
+                            image: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2006%3A40%3A47.jpg",
+                            create_at: "2023-01-16 15:30:42.368",
+                            username: "alfian2316",
+                            profilepicture: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2326%3A40%3A47.jpg"
+                          }
+                    }
+                  message: "success show profile"
         400:
           $ref: '#/components/responses/400'
         500:
@@ -190,20 +248,41 @@ paths:
               schema:
                 type: object
                 example: 
-                  respon data:
-                    description: "success create content"
-                    value :
-                      {
-                      id_content: 1,
-                      content: "This morning I make good scramble egg for breakfast. Yumm!",
-                      image: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2006%3A40%3A47.jpg",
-                      create_at: "2023-01-16 13:56:42.368",
-                        user:
-                          {
-                          id_user: 2,
-                          username: fatmakima
-                          }
-                      }
+                  message: "success create content"
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: '#/components/responses/500'
+
+    get:
+      tags:
+        - content
+      summary: show all contents
+      description: "showing all contents"
+      responses:
+        200:
+          description: success show detail content
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    - id_content: 1,
+                      id_user: 1,
+                      content: "This morning I make good scramble egg for breakfast. Yumm!"
+                      image: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2006%3A40%3A47.jpg"
+                      create_at: "2023-01-16 13:56:42.368"
+                      username: "alfian2316"
+                      profilepicture: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2306%3A40%3A47.jpg"
+                    - id_content: 2,
+                      id_user: 2,
+                      content: "BBQ TIME!"
+                      image: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2006%3A40%3A47.jpg"
+                      create_at: "2023-01-16 13:56:42.368"
+                      username: "alfian2316"
+                      profilepicture: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2306%3A40%3A47.jpg"
+                  message: "success show detail content"
         400:
           $ref: '#/components/responses/400'
         500:
@@ -246,21 +325,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/responseObject'
               example:
-                respon data:
-                    description: "success create content"
-                    value :
-                      {
-                      id_content: 1,
-                      content: "Today is beautiful day. Amazing!",
-                      image: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2006%3A40%3A47.jpg",
-                      create_at: "2023-01-16 13:56:42.368",
-                      update_at: "2023-01-16 14:15:42.368",
-                        user:
-                          {
-                          id_user: 2,
-                          username: fatmakima
-                          }
-                      }
+                message: "success update data"
         400:
           $ref: '#/components/responses/400'
         500:
@@ -290,7 +355,6 @@ paths:
               schema:
                 type: object
                 example:
-                  status: "success"
                   message: "success delete content from user post"
         400:
           $ref: '#/components/responses/400'
@@ -319,21 +383,24 @@ paths:
               schema:
                 type: object
                 example:
-                  respon data:
-                    description: "success show detail content"
-                    value :
-                      {
-                      id_content: 1,
-                      content: "This morning I make good scramble egg for breakfast. Yumm!",
-                      image: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2006%3A40%3A47.jpg",
-                      create_at: "2023-01-16 13:56:42.368",
-                      update_at: "2023-01-16 14:15:42.368",
-                        user:
+                  data:
+                    {
+                    id_content: 1,
+                    content: "This morning I make good scramble egg for breakfast. Yumm!",
+                    image: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2006%3A40%3A47.jpg",
+                    create_at: "2023-01-16 13:56:42.368",
+                    username: "alfian2316",
+                    profilepicture: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2306%3A40%3A47.jpg",
+                      comment:
                           {
+                          id_comment: 1,
+                          comment: "Happy holiday",
                           id_user: 2,
-                          username: fatmakima
+                          username: fatmakima,
+                          profilepicture: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2566%3A40%3A47.jpg"
                           }
                       }
+                  message: "success show detail content"
         400:
           $ref: '#/components/responses/400'
         500:
@@ -372,53 +439,13 @@ paths:
                 type: object
                 example:
                   response data:
-                    description: "succes create comment"
-                    value:
-                      {
-                      id_content: 2,
-                      username: "hannah7381",
-                      comment: "Hello Hannah, your dress is beautiful today.",
-                      create_at: "2023-01-16 14:26:42.368"
-                      }
+                    message: "succes create comment"
         400:
           $ref: '#/components/responses/400'
         500:
           $ref: '#/components/responses/500'
 
-    get:
-      tags:
-        - content
-      summary: show all contents
-      description: "showing all contents"
-      responses:
-        200:
-          description: success show detail content
-          content:
-            application/json:
-              schema:
-                type: object
-                example:
-                  respon data:
-                    description: "success show detail content"
-                    value :
-                      {
-                      id_content: 1,
-                      content: "This morning I make good scramble egg for breakfast. Yumm!",
-                      image: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2006%3A40%3A47.jpg",
-                      create_at: "2023-01-16 13:56:42.368",
-                      update_at: "2023-01-16 14:15:42.368",
-                        user:
-                          {
-                          id_user: 2,
-                          username: fatmakima
-                          }
-                      }
-        400:
-          $ref: '#/components/responses/400'
-        500:
-          $ref: '#/components/responses/500'
-
-  /delete/{id_comment}:
+  /comments/{id_comment}:
     delete:
       tags:
         - comment
@@ -513,7 +540,7 @@ components:
           type: string
   responses:
     400:
-      description: "error from user side"
+      description: "error from user"
       content:
         application/json:
           schema:
@@ -522,8 +549,7 @@ components:
               message:
                 type: string
           example:
-            status: "failed"
-            message: "data not found"
+            message: "Bad request"
     500:
       description: "error from server"
       content:
@@ -534,4 +560,4 @@ components:
               message:
                 type: string
           example:
-            message: "data cannot prosses"
+            message: "Internal server error"
