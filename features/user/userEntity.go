@@ -1,6 +1,8 @@
 package user
 
 import (
+	"mime/multipart"
+
 	"github.com/labstack/echo/v4"
 )
 
@@ -22,16 +24,14 @@ type UserHandler interface {
 	Profile() echo.HandlerFunc
 	Update() echo.HandlerFunc
 	Delete() echo.HandlerFunc
-	UploadImg() echo.HandlerFunc
 }
 
 type UserService interface {
 	Register(newUser Core) (Core, error)
 	Login(username, password string) (string, Core, error)
 	Profile(userToken interface{}) (Core, error)
-	Update(userToken interface{}, updateData Core) (Core, error)
+	Update(formHeader multipart.FileHeader, userToken interface{}, updateData Core) (Core, error)
 	Delete(userToken interface{}) error
-	UploadImg(userToken interface{}, tokennewImage string) error
 }
 
 type UserData interface {
@@ -40,5 +40,4 @@ type UserData interface {
 	Profile(id int) (Core, error)
 	Update(id int, updateData Core) (Core, error)
 	Delete(id int) error
-	UploadImg(id int, newImage string) error
 }

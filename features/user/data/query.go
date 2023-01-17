@@ -112,20 +112,3 @@ func (uq *userQuery) Delete(id int) error {
 	}
 	return nil
 }
-
-// UploadImg implements user.UserData
-func (uq *userQuery) UploadImg(id int, newImage string) error {
-	data := User{}
-	data.Image = newImage
-	qry := uq.db.Where("id = ?", id).Updates(&data)
-	if qry.RowsAffected <= 0 {
-		log.Println("update error : no rows affected")
-		return errors.New("update error : no rows updated")
-	}
-	err := qry.Error
-	if err != nil {
-		log.Println("upload error")
-		return errors.New("query error,upload image fail")
-	}
-	return nil
-}
