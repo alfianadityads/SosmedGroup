@@ -60,11 +60,6 @@ func ReadEnv() *DBConfig {
 		viper.AddConfigPath(".")
 		viper.SetConfigName("local")
 		viper.SetConfigType("env")
-
-		viper.AddConfigPath(".")
-		viper.SetConfigName("local")
-		viper.SetConfigType("env")
-
 		err := viper.ReadInConfig()
 		if err != nil {
 			log.Println("error read config : ", err.Error())
@@ -75,7 +70,6 @@ func ReadEnv() *DBConfig {
 			log.Println("error parse config : ", err.Error())
 			return nil
 		}
-
 	}
 	JWTKey = app.jwtKey
 	return &app

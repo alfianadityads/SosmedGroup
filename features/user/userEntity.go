@@ -9,6 +9,7 @@ type Core struct {
 	ID          uint
 	Name        string
 	Email       string
+	Bio         string
 	Image       string
 	UserName    string
 	Password    string
@@ -21,6 +22,7 @@ type UserHandler interface {
 	Profile() echo.HandlerFunc
 	Update() echo.HandlerFunc
 	Delete() echo.HandlerFunc
+	UploadImg() echo.HandlerFunc
 }
 
 type UserService interface {
@@ -29,6 +31,7 @@ type UserService interface {
 	Profile(userToken interface{}) (Core, error)
 	Update(userToken interface{}, updateData Core) (Core, error)
 	Delete(userToken interface{}) error
+	UploadImg(userToken interface{}, tokennewImage string) error
 }
 
 type UserData interface {
@@ -37,4 +40,5 @@ type UserData interface {
 	Profile(id int) (Core, error)
 	Update(id int, updateData Core) (Core, error)
 	Delete(id int) error
+	UploadImg(id int, newImage string) error
 }
