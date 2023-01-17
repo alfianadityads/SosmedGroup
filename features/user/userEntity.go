@@ -1,6 +1,8 @@
 package user
 
 import (
+	"mime/multipart"
+
 	"github.com/labstack/echo/v4"
 )
 
@@ -28,7 +30,7 @@ type UserService interface {
 	Register(newUser Core) (Core, error)
 	Login(username, password string) (string, Core, error)
 	Profile(userToken interface{}) (Core, error)
-	Update(userToken interface{}, updateData Core) (Core, error)
+	Update(formHeader multipart.FileHeader, userToken interface{}, updateData Core) (Core, error)
 	Delete(userToken interface{}) error
 }
 

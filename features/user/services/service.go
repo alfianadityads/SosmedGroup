@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"log"
+	"mime/multipart"
 	"sosmedapps/features/user"
 	"sosmedapps/helper"
 	"strings"
@@ -65,7 +66,7 @@ func (usc *userServiceCase) Login(username string, password string) (string, use
 }
 
 // Update implements user.UserService
-func (usc *userServiceCase) Update(userToken interface{}, updateData user.Core) (user.Core, error) {
+func (usc *userServiceCase) Update(formHeader multipart.FileHeader, userToken interface{}, updateData user.Core) (user.Core, error) {
 	id := helper.ExtractToken(userToken)
 	if id <= 0 {
 		return user.Core{}, errors.New("data not found")
@@ -78,6 +79,29 @@ func (usc *userServiceCase) Update(userToken interface{}, updateData user.Core) 
 		}
 		updateData.Password = hashingPassword
 	}
+	//-------------ImageProses--------------
+	//validasi size
+	if formHeader.Size > 500000 {
+		return user.Core{}, errors.New("size error")
+	}
+	//get file from header to check type
+	formFile, err := formHeader.Open()
+	if err != nil {
+		return user.Core{}, errors.New("error open formheader")
+	}
+	// Validasi Type
+	if !helper.TypeFile(formFile) {
+		return user.Core{}, errors.New("file type error")
+	}
+	defer formFile.Close()
+	formFile, _ = formHeader.Open()
+	uploadUrl, err := helper.NewMediaUpload().FileUpload(helper.File{File: formFile})
+	if err != nil {
+		return user.Core{}, errors.New("server error")
+	}
+	updateData.Image = uploadUrl
+
+	// -----------------Input data to query----------------
 	res, err := usc.qry.Update(id, updateData)
 	if err != nil {
 		log.Println("query error", err.Error())
@@ -89,6 +113,7 @@ func (usc *userServiceCase) Update(userToken interface{}, updateData user.Core) 
 			return user.Core{}, errors.New("query error, update fail")
 		}
 	}
+
 	return res, nil
 }
 

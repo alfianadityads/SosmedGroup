@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"io"
 	"net/http"
 	"sosmedapps/features/user"
 	"sosmedapps/helper"
@@ -77,7 +76,17 @@ func (uc *userController) Login() echo.HandlerFunc {
 
 // Profile implements user.UserHandler
 func (uc *userController) Profile() echo.HandlerFunc {
-	panic("unimplemented")
+	return func(c echo.Context) error {
+		res, err := uc.srv.Profile(c.Get("user"))
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "internal server error"})
+		}
+		return c.JSON(http.StatusCreated, map[string]interface{}{
+			"data":    res,
+			"message": "success updating account",
+		})
+
+	}
 }
 
 // Delete implements user.UserHandler
@@ -106,111 +115,33 @@ func (uc *userController) Update() echo.HandlerFunc {
 				Data:       &echo.Map{"data": "Select a file to upload"},
 			})
 		}
-		//validasi size
-		if formHeader.Size > 500000 {
-			return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "max file size is 500KB"})
-		}
-		//get file from header
-		formFile, err := formHeader.Open()
+		input := UpdateRequest{}
+		err = c.Bind(&input)
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, helper.MediaDto{
-				StatusCode: http.StatusInternalServerError,
-				Message:    "error",
-				Data:       &echo.Map{"data": err.Error()},
-			})
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "wrong input format"})
 		}
-		// Validasi
-		fileByte, _ := io.ReadAll(formFile)
-		fileType := http.DetectContentType(fileByte)
-		// log.Println(formHeader.Filename, fileType, formHeader.Size)
-		if fileType == "image/png" || fileType == "image/jpeg" {
-
-			uploadUrl, err := helper.NewMediaUpload().FileUpload(helper.File{File: formFile})
-			if err != nil {
-				return c.JSON(http.StatusInternalServerError, helper.MediaDto{
-					StatusCode: http.StatusInternalServerError,
-					Message:    "error",
-					Data:       &echo.Map{"data": err.Error()},
-				})
+		// Proses Input Ke Service
+		res, err := uc.srv.Update(*formHeader, c.Get("user"), *RequstToCore(input))
+		if err != nil {
+			if strings.Contains(err.Error(), "email") {
+				return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "email already used"})
+			} else if strings.Contains(err.Error(), "username") {
+				return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "username already used"})
+			} else if strings.Contains(err.Error(), "type") {
+				return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "only jpg or png file can be upload"})
+			} else if strings.Contains(err.Error(), "size") {
+				return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "max file size is 500KB"})
+			} else {
+				return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "internal server error"})
 			}
-			input := UpdateRequest{}
-			err = c.Bind(&input)
-			if err != nil {
-				return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "wrong input format"})
-			}
-			input.Image = uploadUrl
-			// Proses Input Ke Service
-			res, err := uc.srv.Update(c.Get("user"), *RequstToCore(input))
-			if err != nil {
-				if strings.Contains(err.Error(), "email") {
-					return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "email already used"})
-				} else if strings.Contains(err.Error(), "username") {
-					return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "username already used"})
-				} else {
-					return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "internal server error"})
-				}
-			}
-			return c.JSON(http.StatusCreated, map[string]interface{}{
-				"data":    res,
-				"message": "success updating account",
-			})
-
-		} else {
-			return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "only jpg or png file can be upload"})
 		}
+		return c.JSON(http.StatusCreated, map[string]interface{}{
+			"data":    res,
+			"message": "success updating account",
+		})
+		// if fileType == "image/png" || fileType == "image/jpeg" {
+		// } else {
+		// 	return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "only jpg or png file can be upload"})
+		// }
 	}
 }
-
-// // UploadImg implements user.UserHandler
-// func (uc *userController) UploadImg() echo.HandlerFunc {
-// 	return func(c echo.Context) error {
-// 		formHeader, err := c.FormFile("file")
-// 		if err != nil {
-// 			return c.JSON(http.StatusInternalServerError, helper.MediaDto{
-// 				StatusCode: http.StatusInternalServerError,
-// 				Message:    "error",
-// 				Data:       &echo.Map{"data": "Select a file to upload"},
-// 			})
-// 		}
-// 		//validasi size
-// 		if formHeader.Size > 500000 {
-// 			return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "max file size is 500KB"})
-// 		}
-// 		//get file from header
-// 		formFile, err := formHeader.Open()
-// 		if err != nil {
-// 			return c.JSON(http.StatusInternalServerError, helper.MediaDto{
-// 				StatusCode: http.StatusInternalServerError,
-// 				Message:    "error",
-// 				Data:       &echo.Map{"data": err.Error()},
-// 			})
-// 		}
-// 		// Validasi
-// 		fileByte, _ := io.ReadAll(formFile)
-// 		fileType := http.DetectContentType(fileByte)
-// 		// log.Println(formHeader.Filename, fileType, formHeader.Size)
-// 		if fileType == "image/png" || fileType == "image/jpeg" {
-
-// 			uploadUrl, err := helper.NewMediaUpload().FileUpload(helper.File{File: formFile})
-// 			if err != nil {
-// 				return c.JSON(http.StatusInternalServerError, helper.MediaDto{
-// 					StatusCode: http.StatusInternalServerError,
-// 					Message:    "error",
-// 					Data:       &echo.Map{"data": err.Error()},
-// 				})
-// 			}
-// 			err = uc.srv.UploadImg(c.Get("user"), uploadUrl)
-// 			if err != nil {
-// 				return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "internal server error, upload image fail"})
-// 			}
-// 			return c.JSON(http.StatusOK, helper.MediaDto{
-// 				StatusCode: http.StatusOK,
-// 				Message:    "success",
-// 				Data:       &echo.Map{"data": uploadUrl},
-// 			})
-// 		} else {
-// 			//type file bukan jpeg/png
-// 			return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "only jpg or png file can be upload"})
-// 		}
-// 	}
-// }
