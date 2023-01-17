@@ -14,11 +14,13 @@ tags:
   - name: login
     description: Endpoint for verifying who a user is
   - name: logout
+  - name: search
+    description: Endpoint for find users
   - name: users
     description: Endpoint for perform operations on user
-  - name: content
+  - name: contents
     description: Endpoint to perform operations on user posts
-  - name: comment
+  - name: comments
     description: Endpoint to perform operations on comment
 servers:
   # Added by API Auto Mocking Plugin
@@ -76,6 +78,8 @@ paths:
       tags:
         - "login"
       description: feature for verifying who a user is
+      security:
+        - JWTAuth: []
       requestBody:
         required: true
         content:
@@ -91,6 +95,7 @@ paths:
               example: 
                 username: "alfianad11"
                 passwoord: "alfian1234"
+                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJ1c2VySUQiOjR9.QTZxERh4CwC_UnL_eJvTi_A_qdLeBZ-IjR4nqoxjodk"
       responses:
         200:
           description: "success login"
@@ -99,6 +104,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/responseObject'
               example:
+                data: 
+                  - id_user: 1
+                    username: "alfianad11"
+                    name: "Alfian Aditya"
                 message: "login success"
         400:
           $ref: '#/components/responses/400'
@@ -109,8 +118,8 @@ paths:
     put:
       tags:
         - users
-      summary: update data user
-      description: Update data for user 
+      summary: update profile
+      description: Update user profile
       security:
         - JWTAuth: []
       requestBody:
@@ -123,8 +132,6 @@ paths:
                 name:
                   type: string
                 username:
-                  type: string
-                date_of_birth:
                   type: string
                 email:
                   type: string
@@ -140,7 +147,6 @@ paths:
             example: 
               name: "albert"
               username: "albertenst"
-              date_of_birh: "1995-8-23"
               bio: "Hello, my name is albert"
               email: "albertxxx@gmail.com"
               password: "secret"
@@ -153,7 +159,7 @@ paths:
               schema:
                 type: object
               example:
-                message: "update data success"
+                message: "update profile success"
         400:
           $ref: '#/components/responses/400'
         500:
@@ -187,15 +193,6 @@ paths:
       description: getting data user by id user
       security: 
         - JWTAuth: []
-      parameters:
-        - name: id_user
-          description: "id user"
-          required: true
-          in: path
-          schema:
-            description: "id user"
-            type: integer
-            example: 1
       responses:
         200:
           description: success show profile
@@ -206,18 +203,19 @@ paths:
                 example:
                   data:
                     {
-                      id_user: 1,
+                      id: 1,
                       bio: "Hello my name Alfian Aditya",
                       username: "alfian2316",
                       profilepicture: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673881607/go-cloudinary/llhltxp55elirjkmlyld.png",
-                        content:
+                        contents:
                           {
                             id_content: 1,
                             content: "This morning I make good scramble egg for breakfast. Yumm!",
                             image: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2006%3A40%3A47.jpg",
                             create_at: "2023-01-16 13:56:42.368",
                             username: "alfian2316",
-                            profilepicture: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673881607/go-cloudinary/llhltxp55elirjkmlyld.png"
+                            profilepicture: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673881607/go-cloudinary/llhltxp55elirjkmlyld.png",
+                            comments: 3
                           },
                           {
                             id_content: 2,
@@ -225,10 +223,52 @@ paths:
                             image: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673892611/go-cloudinary/gxjitapwl7pjcgskb3ph.jpg",
                             create_at: "2023-01-16 15:30:42.368",
                             username: "alfian2316",
-                            profilepicture: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673892611/go-cloudinary/gxjitapwl7pjcgskb3ph.jpg"
+                            profilepicture: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673892611/go-cloudinary/gxjitapwl7pjcgskb3ph.jpg",
+                            comments: 3
                           }
                     }
                   message: "success show profile"
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: '#/components/responses/500'
+          
+  /search:
+    get:
+      tags:
+        - search
+      summary: find user
+      description: finding user by username
+      security:
+        - JWTAuth: []
+      parameters: 
+        - in: query
+          name: offset
+          schema:
+            type: string
+          description: the numbers of result user
+        - in: query
+          name: q
+          schema:
+            example: "alfian2316"
+            type: string
+          required: true
+          description: the keyword used to find username
+      responses:
+        200:
+          description: success find user
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    {
+                      id: 3,
+                      username: "alfian2316",
+                      name: "Alfian Aditya"
+                    }
+                  message: "success find user"
         400:
           $ref: '#/components/responses/400'
         500:
@@ -237,7 +277,7 @@ paths:
   /contents:
     post:
       tags:
-        - content
+        - contents
       summary: add content to user
       description: adding content post to user
       security:
@@ -274,7 +314,7 @@ paths:
 
     get:
       tags:
-        - content
+        - contents
       summary: show all contents
       description: "showing all contents"
       responses:
@@ -287,19 +327,23 @@ paths:
                 example:
                   data:
                     - id_content: 1,
-                      id_user: 1,
                       content: "This morning I make good scramble egg for breakfast. Yumm!"
                       image: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673881607/go-cloudinary/llhltxp55elirjkmlyld.png"
                       create_at: "2023-01-16 13:56:42.368"
-                      username: "alfian2316"
                       profilepicture: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673881607/go-cloudinary/llhltxp55elirjkmlyld.png"
+                      users:
+                        - id_user: 1,
+                          username: "alfian2316"
+                      comment: 3,
                     - id_content: 2,
-                      id_user: 2,
                       content: "BBQ TIME!"
                       image: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673892611/go-cloudinary/gxjitapwl7pjcgskb3ph.jpg"
                       create_at: "2023-01-16 13:56:42.368"
-                      username: "alfian2316"
                       profilepicture: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673892611/go-cloudinary/gxjitapwl7pjcgskb3ph.jpg"
+                      users:
+                        - id_user: 2,
+                          username: "alfian2316"
+                      comment: 4,
                   message: "success show detail content"
         400:
           $ref: '#/components/responses/400'
@@ -309,7 +353,7 @@ paths:
   /contents/{id_content}:
     put:
       tags:
-        - content
+        - contents
       summary: edit content from post
       description: edit content from user post
       security:
@@ -321,7 +365,7 @@ paths:
           in: path
           schema:
             description: id content
-            type: integer
+            type: string
             example: 1
       requestBody:
         required: true
@@ -337,14 +381,14 @@ paths:
                   format: binary
             example: 
               content: "Good tea in the morning"
-              image: ""
+              image: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673892611/go-cloudinary/gxjitapwl7pjcgskb3ph.jpg"
       responses:
         200:
           description: update content success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/responseObject'
+                type: object
               example:
                 message: "success update data"
         400:
@@ -354,7 +398,7 @@ paths:
 
     delete:
       tags:
-        - content
+        - contents
       summary: delete user content
       description: deleting content from user post
       security:
@@ -366,7 +410,7 @@ paths:
           in: path
           schema:
             description: id content
-            type: integer
+            type: string
             example: 1
       responses:
         200:
@@ -384,7 +428,7 @@ paths:
 
     get:
       tags:
-        - content
+        - contents
       summary: show detail content
       description: show detail data content
       parameters:
@@ -394,7 +438,7 @@ paths:
           in: path
           schema:
             description: "id content"
-            type: integer
+            type: string
             example: 1
       responses:
         200:
@@ -417,7 +461,7 @@ paths:
                           id_comment: 1,
                           comment: "Happy holiday",
                           id_user: 2,
-                          username: fatmakima,
+                          username: "fatmakima",
                           profilepicture: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673892611/go-cloudinary/gxjitapwl7pjcgskb3ph.jpg"
                           }
                       }
@@ -427,10 +471,10 @@ paths:
         500:
           $ref: '#/components/responses/500'
 
-  /comment/{id_content}:
+  /comments/{id_content}:
     post:
       tags:
-        - comment
+        - comments
       summary: add comment to user content by id content
       description: adding comment to content based on id content
       security:
@@ -442,7 +486,7 @@ paths:
           in: path
           schema:
             description: "id content"
-            type: integer
+            type: string
             example: 1
       requestBody:
         required: true
@@ -470,7 +514,7 @@ paths:
   /comments/{id_comment}:
     delete:
       tags:
-        - comment
+        - comments
       summary: delete comment user content based id content
       description: "deleting comment user content based id content"
       security: 
@@ -482,7 +526,7 @@ paths:
           in: path
           schema:
             description: "id_comment"
-            type: integer
+            type: string
             example: 1
       responses:
         200:
