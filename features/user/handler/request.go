@@ -19,7 +19,7 @@ type RegisterRequest struct {
 type UpdateRequest struct {
 	Name        string `json:"name" form:"name"`
 	Email       string `json:"email" form:"email"`
-	Image       string `json:"file" form:"file"`
+	Image       string `json:"image" form:"image"`
 	Bio         string `json:"bio" form:"bio"`
 	UserName    string `json:"username" form:"username" validate:"required"`
 	Password    string `json:"password" form:"password"`

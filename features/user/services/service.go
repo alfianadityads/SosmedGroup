@@ -110,17 +110,3 @@ func (usc *userServiceCase) Delete(userToken interface{}) error {
 	}
 	return nil
 }
-
-// UploadImg implements user.UserService
-func (usc *userServiceCase) UploadImg(userToken interface{}, newImage string) error {
-	id := helper.ExtractToken(userToken)
-	if id <= 0 {
-		return errors.New("id not found, server error")
-	}
-	err := usc.qry.UploadImg(id, newImage)
-	if err != nil {
-		log.Println("query error", err.Error())
-		return errors.New("query error, upload image fail")
-	}
-	return nil
-}

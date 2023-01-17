@@ -35,7 +35,6 @@ func main() {
 	e.POST("/login", usrHdl.Login())
 	e.PUT("/users", usrHdl.Update(), middleware.JWT([]byte(config.JWTKey)))
 	e.DELETE("/users", usrHdl.Delete(), middleware.JWT([]byte(config.JWTKey)))
-	e.PUT("/file", usrHdl.UploadImg(), middleware.JWT([]byte(config.JWTKey)))
 	// e.POST("/remote", helper.RemoteUpload)
 	// ========== Run Program ===========
 	if err := e.Start(":8000"); err != nil {
