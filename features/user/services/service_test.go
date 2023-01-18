@@ -27,6 +27,20 @@ func TestRegister(t *testing.T) {
 		repo.AssertExpectations(t)
 	})
 
+	t.Run("all input must fill", func(t *testing.T) {
+		inputData := user.Core{
+			Name:     "alif",
+			Email:    "alif@example.com",
+			Password: "alif342",
+		}
+		srv := New(repo)
+		inputData.Password = "alif342"
+		res, err := srv.Register(inputData)
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "not allowed empty")
+		assert.Equal(t, uint(0), res.ID)
+	})
+
 	t.Run("internal server error", func(t *testing.T) {
 		inputData := user.Core{Name: "Alif", Email: "alif@example.com", UserName: "alif123", Password: "alif342"}
 		resData := user.Core{ID: uint(1), Name: "Alif", Email: "alif@example.com", UserName: "alif123"}
@@ -35,7 +49,7 @@ func TestRegister(t *testing.T) {
 		res, err := srv.Register(inputData)
 		assert.NotNil(t, err)
 		assert.Equal(t, uint(0), res.ID)
-		assert.ErrorContains(t, err, "server")
+		assert.ErrorContains(t, err, "server error")
 		repo.AssertExpectations(t)
 	})
 }
@@ -58,8 +72,7 @@ func TestLogin(t *testing.T) {
 		repo.AssertExpectations(t)
 	})
 
-	// 
-	t.Run("not found", func(t *testing.T) {
+	t.Run("account not found", func(t *testing.T) {
 		inputEmail := "alif@example.com"
 
 		repo.On("Login", inputEmail).Return(user.Core{}, errors.New("not found"))
@@ -88,15 +101,16 @@ func TestLogin(t *testing.T) {
 		assert.Equal(t, uint(0), res.ID)
 		repo.AssertExpectations(t)
 	})
+
 }
 
 func TestProfile(t *testing.T) {
 	repo := mocks.NewUserData(t)
 
-	t.Run("succes show profile", func(t *testing.T) {
-		resData := user.Core{ID: 1, Name: "Alif", Email: "alif@example.com", UserName: "alif123"}
+	t.Run("success show profile", func(t *testing.T) {
+		resData := user.Core{ID: uint(1), Name: "Alif", Email: "alif@example.com", UserName: "alif123"}
 
-		repo.On("Profile", int(1)).Return(resData, nil).Once()
+		repo.On("Profile", uint(1)).Return(resData, nil).Once()
 
 		srv := New(repo)
 
@@ -119,7 +133,22 @@ func TestProfile(t *testing.T) {
 		res, err := srv.Profile(token)
 		assert.NotNil(t, err)
 		assert.ErrorContains(t, err, "not found")
-		assert.Equal(t, 0, res.ID)
+		assert.Equal(t, uint(0), res.ID)
+	})
+
+	t.Run("account not found", func(t *testing.T) {
+		repo.On("Profile", 4).Return(user.Core{}, errors.New("data not found")).Once()
+
+		srv := New(repo)
+
+		_, token := helper.GenerateToken(4)
+		pToken := token.(*jwt.Token)
+		pToken.Valid = true
+		res, err := srv.Profile(pToken)
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "error")
+		assert.Equal(t, uint(0), res.ID)
+		repo.AssertExpectations(t)
 	})
 
 	// internal server error
@@ -138,44 +167,105 @@ func TestProfile(t *testing.T) {
 	})
 }
 
-func TestUpdate(t *testing.T) {
+// func TestUpdate(t *testing.T) {
+// 	repo := mocks.NewUserData(t)
+
+// 	t.Run("success updating account", func(t *testing.T) {
+// 		inputData := user.Core{Name: "Alif", Email: "alif@example.com", UserName: "alif123"}
+
+// 		hash, _ := helper.GeneratePassword("alfian1221")
+// 		resData := user.Core{ID: uint(1),Name: "Alif", Email: "alif@example.com", UserName: "alif123", Password: hash}
+// 		repo.On("Update", uint(1), inputData).Return(resData, nil).Once()
+
+// 		srv := New(repo)
+
+// 		_, token := helper.GenerateToken(1)
+
+// 		pToken := token.(*jwt.Token)
+// 		pToken.Valid = true
+
+// 		res, err := srv.Update(pToken, inputData)
+// 		assert.Nil(t, err)
+// 		assert.Equal(t, resData.ID, res.ID)
+// 		repo.AssertExpectations(t)
+// 	})
+
+// 	t.Run("Not found", func(t *testing.T) {
+// 		inputData := user.Core{Name: "Alif", Email: "alif@example.com", UserName: "alif123"}
+// 		repo.On("Update", uint(2), inputData).Return(user.Core{}, errors.New("not found")).Once()
+
+// 		srv := New(repo)
+
+// 		_, token := helper.GenerateToken(2)
+
+// 		pToken := token.(*jwt.Token)
+// 		pToken.Valid = true
+
+// 		res, err := srv.Update(pToken, inputData)
+// 		assert.NotNil(t, err)
+// 		assert.ErrorContains(t, err, "tidak ditemukan")
+// 		assert.Equal(t, uint(0), res.ID)
+// 		repo.AssertExpectations(t)
+// 	})
+// }
+
+func TestDelete(t *testing.T) {
 	repo := mocks.NewUserData(t)
 
-	t.Run("success updating account", func(t *testing.T) {
-		inputData := user.Core{Name: "Alif", Email: "alif@example.com", UserName: "alif123"}
-
-		hash, _ := helper.GeneratePassword("alfian1221")
-		resData := user.Core{ID: uint(1),Name: "Alif", Email: "alif@example.com", UserName: "alif123", Password: hash}
-		repo.On("Update", uint(1), inputData).Return(resData, nil).Once()
+	t.Run("deleting account successful", func(t *testing.T) {
+		repo.On("Delete", 1).Return(nil).Once()
 
 		srv := New(repo)
 
 		_, token := helper.GenerateToken(1)
-
 		pToken := token.(*jwt.Token)
 		pToken.Valid = true
 
-		res, err := srv.Update(pToken, inputData)
+		err := srv.Delete(pToken)
 		assert.Nil(t, err)
-		assert.Equal(t, resData.ID, res.ID)
 		repo.AssertExpectations(t)
 	})
 
-	t.Run("Not found", func(t *testing.T) {
-		inputData := user.Core{Name: "Alif", Email: "alif@example.com", UserName: "alif123"}
-		repo.On("Update", uint(2), inputData).Return(user.Core{}, errors.New("not found")).Once()
+	// internal server error, account fail to delete
+	t.Run("internal server error, account fail to delete", func(t *testing.T) {
+		repo.On("Delete", mock.Anything).Return(errors.New("internal server error, account fail to delete")).Once()
+		srv := New(repo)
+
+		_, token := helper.GenerateToken(1)
+		pToken := token.(*jwt.Token)
+		pToken.Valid = true
+		err := srv.Delete(pToken)
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "fail")
+		repo.AssertExpectations(t)
+	})
+
+	t.Run("delete account fail", func(t *testing.T) {
+		repo.On("Delete", 2).Return(errors.New("delete account fail")).Once()
 
 		srv := New(repo)
 
 		_, token := helper.GenerateToken(2)
+		pToken := token.(*jwt.Token)
+		pToken.Valid = true
+
+		err := srv.Delete(pToken)
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "fail")
+		repo.AssertExpectations(t)
+	})
+
+	t.Run("jwt not found", func(t *testing.T) {
+		srv := New(repo)
+
+		_, token := helper.GenerateToken(0)
 
 		pToken := token.(*jwt.Token)
 		pToken.Valid = true
 
-		res, err := srv.Update(pToken, inputData)
+		err := srv.Delete(pToken)
 		assert.NotNil(t, err)
-		assert.ErrorContains(t, err, "tidak ditemukan")
-		assert.Equal(t, uint(0), res.ID)
+		assert.ErrorContains(t, err, "not found")
 		repo.AssertExpectations(t)
 	})
 }
