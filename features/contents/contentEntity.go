@@ -11,7 +11,6 @@ type CoreContent struct {
 	Content      string `validate:"required" json:"content" from:"content"`
 	ContentImage string `json:"content_image" from:"content_image"`
 	CreateAt     string
-	OwnerName    string
 	NumbComment  uint
 	Users        CoreUser
 }
@@ -24,24 +23,24 @@ type CoreUser struct {
 
 type ContentHandler interface {
 	AddContent() echo.HandlerFunc
-	// UpdateContent() echo.HandlerFunc
-	// DeleteContent() echo.HandlerFunc
-	// DetailContent() echo.HandlerFunc
+	UpdateContent() echo.HandlerFunc
+	DetailContent() echo.HandlerFunc
 	AllContent() echo.HandlerFunc
+	DeleteContent() echo.HandlerFunc
 }
 
 type ContentService interface {
 	AddContent(token interface{}, fileHeader multipart.FileHeader, newContent CoreContent) (CoreContent, error)
-	// UpdateContent(token interface{}, contentID uint, updateContent CoreContent) (CoreContent, error)
-	// DeleteContent(token interface{}, contentID uint) error
-	// DetailContent(token interface{}) ([]CoreContent, error)
+	UpdateContent(token interface{}, contentID uint, content string) (string, error)
+	DetailContent(contentID uint) (CoreContent, error)
 	AllContent() ([]CoreContent, error)
+	DeleteContent(token interface{}, contentID uint) error
 }
 
 type ContentData interface {
 	AddContent(userID uint, newContent CoreContent) (CoreContent, error)
-	// UpdateContent(userID uint, contentID uint, updateContent CoreContent) (CoreContent, error)
-	// DeleteContent(userID uint, contentID uint) error
-	// DetailContent(contentID uint) ([]CoreContent, error)
+	UpdateContent(userID uint, contentID uint, content string) (string, error)
+	DetailContent(contentID uint) (CoreContent, error)
 	AllContent() ([]CoreContent, error)
+	DeleteContent(userID uint, contentID uint) error
 }

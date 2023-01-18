@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"sosmedapps/features/contents"
 	"sosmedapps/helper"
+	"strconv"
 	"strings"
 
 	"github.com/labstack/echo/v4"
@@ -59,8 +60,6 @@ func (cc *contentController) AllContent() echo.HandlerFunc {
 		res, err := cc.srv.AllContent()
 		if err != nil {
 			if strings.Contains(err.Error(), "type") {
-				return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "only jpg or png file can be upload"})
-			} else {
 				return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "internal server error"})
 			}
 		}
@@ -69,5 +68,70 @@ func (cc *contentController) AllContent() echo.HandlerFunc {
 			"message": "success",
 		})
 
+	}
+}
+
+// DetailContent implements contents.ContentHandler
+func (cc *contentController) DetailContent() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		cID := c.Param("id")
+		contID, _ := strconv.Atoi(cID)
+		res, err := cc.srv.DetailContent(uint(contID))
+		if err != nil {
+			if strings.Contains(err.Error(), "type") {
+				return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "content not found"})
+			} else {
+				return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "internal server error"})
+			}
+		}
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"data":    res,
+			"message": "success show detail",
+		})
+
+	}
+}
+
+// UpdateContent implements contents.ContentHandler
+func (cc *contentController) UpdateContent() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		cID := c.Param("id")
+		contID, _ := strconv.Atoi(cID)
+		input := EditContentRequest{}
+		err := c.Bind(&input)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "wrong input format"})
+		}
+		res, err := cc.srv.UpdateContent(c.Get("user"), uint(contID), input.Content)
+		if err != nil {
+			if strings.Contains(err.Error(), "not") {
+				return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "you are not allowed edited other people content"})
+			} else {
+				return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "internal server error"})
+			}
+		}
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"data":    res,
+			"message": "success show detail",
+		})
+	}
+}
+
+// DeleteContent implements contents.ContentHandler
+func (cc *contentController) DeleteContent() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		cID := c.Param("id")
+		contID, _ := strconv.Atoi(cID)
+		err := cc.srv.DeleteContent(c.Get("user"), uint(contID))
+		if err != nil {
+			if strings.Contains(err.Error(), "not") {
+				return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "you are not allowed delete other people content"})
+			} else {
+				return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "internal server error, deleting content fail"})
+			}
+		}
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "deleting content successful",
+		})
 	}
 }

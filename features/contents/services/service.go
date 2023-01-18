@@ -6,6 +6,7 @@ import (
 	"mime/multipart"
 	"sosmedapps/features/contents"
 	"sosmedapps/helper"
+	"strings"
 )
 
 type contentServiceCase struct {
@@ -60,4 +61,41 @@ func (csc *contentServiceCase) AllContent() ([]contents.CoreContent, error) {
 		return []contents.CoreContent{}, errors.New("server error")
 	}
 	return res, nil
+}
+
+// DetailContent implements contents.ContentService
+func (csc *contentServiceCase) DetailContent(contentID uint) (contents.CoreContent, error) {
+	res, err := csc.qry.DetailContent(contentID)
+	if err != nil {
+		log.Println("query error")
+		return contents.CoreContent{}, errors.New("server error")
+	}
+	return res, nil
+}
+
+// UpdateContent implements contents.ContentService
+func (csc *contentServiceCase) UpdateContent(token interface{}, contentID uint, content string) (string, error) {
+	userID := helper.ExtractToken(token)
+	res, err := csc.qry.UpdateContent(uint(userID), contentID, content)
+	if err != nil {
+		if strings.Contains(err.Error(), "cannot") {
+			return "", errors.New("you are not allowed edited other people content")
+		}
+		return "", errors.New("internal server error")
+	}
+	return res, nil
+}
+
+// DeleteContent implements contents.ContentService
+func (csc *contentServiceCase) DeleteContent(token interface{}, contentID uint) error {
+	userID := helper.ExtractToken(token)
+	err := csc.qry.DeleteContent(uint(userID), contentID)
+	if err != nil {
+		log.Println("query error")
+		if strings.Contains(err.Error(), "cannot") {
+			return errors.New("you are not allowed delete other people content")
+		}
+		return errors.New("server error")
+	}
+	return nil
 }
