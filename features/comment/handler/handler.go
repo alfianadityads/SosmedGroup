@@ -4,26 +4,13 @@ import (
 	"net/http"
 	"sosmedapps/features/comment"
 	"strconv"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 )
 
 type commentController struct {
 	srv comment.CommentService
-}
-
-// GetCom implements comment.CommentHandler
-func (cc *commentController) GetCom() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		res, err := cc.srv.GetCom()
-		if err != nil {
-			return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "internal server error"})
-		}
-		return c.JSON(http.StatusCreated, map[string]interface{}{
-			"data":    res,
-			"message": "success creating comment",
-		})
-	}
 }
 
 func New(ch comment.CommentService) comment.CommentHandler {
@@ -55,5 +42,33 @@ func (cc *commentController) NewComment() echo.HandlerFunc {
 
 // Delete implements comment.CommentHandler
 func (cc *commentController) Delete() echo.HandlerFunc {
-	panic("unimplemented")
+	return func(c echo.Context) error {
+		cID := c.Param("id")
+		commentID, _ := strconv.Atoi(cID)
+		err := cc.srv.Delete(c.Get("user"), uint(commentID))
+		if err != nil {
+			if strings.Contains(err.Error(), "not") {
+				return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "you are not allowed delete other people comment"})
+			} else {
+				return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "internal server error, deleting comment fail"})
+			}
+		}
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "deleting comment successful",
+		})
+	}
+}
+
+// GetCom implements comment.CommentHandler
+func (cc *commentController) GetCom() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		res, err := cc.srv.GetCom()
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "internal server error"})
+		}
+		return c.JSON(http.StatusCreated, map[string]interface{}{
+			"data":    res,
+			"message": "success creating comment",
+		})
+	}
 }
