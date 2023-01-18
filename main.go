@@ -6,6 +6,9 @@ import (
 	comData "sosmedapps/features/comment/data"
 	comHdl "sosmedapps/features/comment/handler"
 	comSrv "sosmedapps/features/comment/services"
+	contData "sosmedapps/features/contents/data"
+	contHdl "sosmedapps/features/contents/handler"
+	contSrv "sosmedapps/features/contents/services"
 	uData "sosmedapps/features/user/data"
 	uHdl "sosmedapps/features/user/handler"
 	uSrv "sosmedapps/features/user/services"
@@ -26,6 +29,11 @@ func main() {
 	usrData := uData.New(db)
 	usrSrv := uSrv.New(usrData)
 	usrHdl := uHdl.New(usrSrv)
+
+	cData := contData.New(db)
+	cSrv := contSrv.New(cData)
+	cHdl := contHdl.New(cSrv)
+
 	cmData := comData.New(db)
 	cmSrv := comSrv.New(cmData)
 	cmHdl := comHdl.New(cmSrv)
@@ -44,9 +52,11 @@ func main() {
 	e.GET("/users", usrHdl.Profile(), middleware.JWT([]byte(config.JWTKey)))
 
 	//CONTENT
+	e.POST("/contents", cHdl.AddContent(), middleware.JWT([]byte(config.JWTKey)))
+	e.GET("/contents", cHdl.AllContent())
 
 	// COMMENT
-	e.POST("/comment/:id", cmHdl.NewComment(), middleware.JWT([]byte(config.JWTKey)))
+	e.POST("/comments/:id", cmHdl.NewComment(), middleware.JWT([]byte(config.JWTKey)))
 	// e.POST("/remote", helper.RemoteUpload)
 	// ========== Run Program ===========
 	if err := e.Start(":8000"); err != nil {

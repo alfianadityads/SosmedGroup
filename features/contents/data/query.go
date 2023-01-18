@@ -1,26 +1,49 @@
 package data
 
-// type contentQry struct {
-// 	db *gorm.DB
-// }
+import (
+	"errors"
+	"log"
+	"sosmedapps/features/contents"
 
-// func NewCont(db *gorm.DB) contents.ContentData {
-// 	return &contentQry{
-// 		db: db,
-// 	}
-// }
+	"gorm.io/gorm"
+)
 
-// func (cq *contentQry) AddContent(userID uint, newContent contents.CoreContent) (contents.CoreContent, error) {
-// 	cnv := CoreToData(newContent)
-// 	cnv.UserID = uint(userID)
-// 	err := cq.db.Create(&cnv).Error
-// 	if err != nil {
-// 		return contents.CoreContent{}, err
-// 	}
-// 	newContent.ID = cnv.ID
+type contentQry struct {
+	db *gorm.DB
+}
 
-// 	return newContent, nil
-// }
+func New(db *gorm.DB) contents.ContentData {
+	return &contentQry{
+		db: db,
+	}
+}
+
+func (cq *contentQry) AddContent(userID uint, newContent contents.CoreContent) (contents.CoreContent, error) {
+	cnv := CoreToData(newContent)
+	cnv.UserID = uint(userID)
+	err := cq.db.Create(&cnv).Error
+	if err != nil {
+		return contents.CoreContent{}, err
+	}
+	newContent.ID = cnv.ID
+
+	return newContent, nil
+}
+
+// AllContent implements contents.ContentData
+func (cq *contentQry) AllContent() ([]contents.CoreContent, error) {
+	res := []Content{}
+	err := cq.db.Find(&res)
+	if err != nil {
+		log.Println("query error", err.Error)
+		return []contents.CoreContent{}, errors.New("server error")
+	}
+	hasil := []contents.CoreContent{}
+	for i := 0; i < len(res); i++ {
+		hasil = append(hasil, ContentToCore(res[i]))
+	}
+	return hasil, nil
+}
 
 // func (cq *contentQry) UpdateContent(userID uint, contentID uint, updateContent contents.CoreContent) (contents.CoreContent, error) {
 
@@ -68,5 +91,3 @@ package data
 // 	tmp2 := ToCoreContent(tmp)
 // 	return tmp2, nil
 // }
-
-// func (cq *contentQry) AllContent() ([]contents.CoreContent, error)
