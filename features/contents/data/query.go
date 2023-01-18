@@ -2,6 +2,7 @@ package data
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"sosmedapps/features/contents"
 
@@ -33,61 +34,91 @@ func (cq *contentQry) AddContent(userID uint, newContent contents.CoreContent) (
 // AllContent implements contents.ContentData
 func (cq *contentQry) AllContent() ([]contents.CoreContent, error) {
 	res := []Content{}
-	err := cq.db.Find(&res)
+	err := cq.db.Find(&res).Error
 	if err != nil {
-		log.Println("query error", err.Error)
+		log.Println("query error", err.Error())
 		return []contents.CoreContent{}, errors.New("server error")
 	}
 	hasil := []contents.CoreContent{}
 	for i := 0; i < len(res); i++ {
 		hasil = append(hasil, ContentToCore(res[i]))
+		qry := User{}
+		err := cq.db.Where("id=?", res[i].UserID).First(&qry).Error
+		if err != nil {
+			log.Println("no data found")
+			return []contents.CoreContent{}, errors.New("data not found")
+		}
+		hasil[i].Users.Name = qry.Name
+		hasil[i].Users.UserName = qry.UserName
+		hasil[i].CreateAt = fmt.Sprintf("%d - %s - %d", res[i].CreatedAt.Day(), res[i].CreatedAt.Month(), res[i].CreatedAt.Year())
 	}
 	return hasil, nil
 }
 
-// func (cq *contentQry) UpdateContent(userID uint, contentID uint, updateContent contents.CoreContent) (contents.CoreContent, error) {
+// DetailContent implements contents.ContentData
+func (cq *contentQry) DetailContent(contentID uint) (contents.CoreContent, error) {
+	res := Content{}
+	err := cq.db.Where("id=?", contentID).First(&res).Error
+	if err != nil {
+		log.Println("no data found")
+		return contents.CoreContent{}, errors.New("data not found")
+	}
+	qry := User{}
+	err = cq.db.Where("id=?", res.UserID).First(&qry).Error
+	if err != nil {
+		log.Println("no data found")
+		return contents.CoreContent{}, errors.New("data not found")
+	}
+	hasil := ContentToCore(res)
+	hasil.Users.Name = qry.Name
+	hasil.Users.UserName = qry.UserName
+	hasil.CreateAt = fmt.Sprintf("%d - %s - %d", res.CreatedAt.Day(), res.CreatedAt.Month(), res.CreatedAt.Year())
+	return hasil, nil
+}
 
-// 	cnv := CoreToData(updateContent)
-// 	qry := cq.db.Where("user_id = ? AND id = ?", userID, contentID).Updates(&cnv)
+// UpdateContent implements contents.ContentData
+func (cq *contentQry) UpdateContent(userID uint, contentID uint, content string) (string, error) {
+	vld := Content{}
+	err := cq.db.Where("user_id=? AND id=?", userID, contentID).First(&vld).Error
+	if err != nil {
+		log.Println("content not found", err.Error())
+		return "", errors.New("content cannot edited")
+	}
+	res := Content{}
+	res.Content = content
+	qry := cq.db.Where("user_id=? AND id=?", userID, contentID).Updates(&res)
+	if qry.RowsAffected <= 0 {
+		log.Println("update error : no rows affected")
+		return "", errors.New("update error : no rows updated")
+	}
+	err = qry.Error
+	if err != nil {
+		log.Println("update error")
+		return "", errors.New("query error,update fail")
+	}
+	return content, nil
+}
 
-// 	affrows := qry.RowsAffected
-// 	if affrows <= 0 {
-// 		log.Println("no rows affected")
-// 		return contents.CoreContent{}, errors.New("no content has been changed")
-// 	}
-
-// 	err := qry.Error
-// 	if err != nil {
-// 		log.Println("update query error", err.Error())
-// 		return contents.CoreContent{}, err
-// 	}
-// 	cToCore := cnv.ContentToCore()
-// 	return cToCore, nil
-// }
-
-// func (cq *contentQry) DeleteContent(userID uint, contentID uint) error {
-// 	qry := cq.db.Where("id = ? AND id_user = ?", contentID, userID).Delete(&Content{})
-
-// 	affrows := qry.RowsAffected
-// 	if affrows >= 0 {
-// 		log.Println("now rows affected")
-// 		return errors.New("no content has been deleted")
-// 	}
-
-// 	err := qry.Error
-// 	if err != nil {
-// 		log.Println("delete query error")
-// 		return errors.New("can't delete content")
-// 	}
-// 	return nil
-// }
-
-// func (cq *contentQry) DetailContent(contentID uint) ([]contents.CoreContent, error) {
-// 	tmp := []Content{}
-// 	if err := cq.db.Preload("User").Where("id = ?", contentID).First(&tmp); err != nil {
-// 		log.Println("get by ID content querry error", err.Error)
-// 		return ToCoreContent(tmp), err.Error
-// 	}
-// 	tmp2 := ToCoreContent(tmp)
-// 	return tmp2, nil
-// }
+// DeleteContent implements contents.ContentData
+func (cq *contentQry) DeleteContent(userID uint, contentID uint) error {
+	//cek apakah content yang akan dihapus milik user yang akan menghapus
+	vld := Content{}
+	err := cq.db.Where("user_id=? AND id=?", userID, contentID).First(&vld).Error
+	if err != nil {
+		log.Println("content not found", err.Error())
+		return errors.New("content cannot deleted")
+	}
+	// ok hapus
+	qry := cq.db.Delete(&Content{}, contentID)
+	rowAffect := qry.RowsAffected
+	if rowAffect <= 0 {
+		log.Println("no data processed")
+		return errors.New("no user has delete")
+	}
+	err = qry.Error
+	if err != nil {
+		log.Println("delete query error", err.Error())
+		return errors.New("delete content fail")
+	}
+	return nil
+}
