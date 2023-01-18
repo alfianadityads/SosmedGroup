@@ -119,7 +119,13 @@ func (usc *userServiceCase) Update(formHeader multipart.FileHeader, userToken in
 
 // Profile implements user.UserService
 func (usc *userServiceCase) Profile(userToken interface{}) (user.Core, error) {
-	panic("unimplemented")
+	id := helper.ExtractToken(userToken)
+	res, err := usc.qry.Profile(id)
+	if err != nil {
+		log.Println("query error", err.Error())
+		return user.Core{}, errors.New("server error")
+	}
+	return res, nil
 }
 
 // Delete implements user.UserService

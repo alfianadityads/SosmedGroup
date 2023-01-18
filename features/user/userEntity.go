@@ -2,20 +2,23 @@ package user
 
 import (
 	"mime/multipart"
+	cmData "sosmedapps/features/comment/data"
+	cData "sosmedapps/features/contents/data"
 
 	"github.com/labstack/echo/v4"
 )
 
 // perjanjian kontrak
 type Core struct {
-	ID          uint
-	Name        string
-	Email       string
-	Bio         string
-	Image       string
-	UserName    string
-	Password    string
-	DateOfBirth string
+	ID       uint
+	Name     string
+	Email    string
+	Bio      string
+	Image    string
+	UserName string
+	Password string
+	Content  []cData.Content
+	Comment  []cmData.Comment
 }
 
 type UserHandler interface {
