@@ -9,16 +9,24 @@ import (
 )
 
 var (
-	JWTKey = ""
+	JWTKey                   = ""
+	CLOUDINARY_CLOUD_NAME    = ""
+	CLOUDINARY_API_KEY       = ""
+	CLOUDINARY_API_SECRET    = ""
+	CLOUDINARY_UPLOAD_FOLDER = ""
 )
 
 type DBConfig struct {
-	DBUser string
-	DBPass string
-	DBHost string
-	DBPort int
-	DBName string
-	jwtKey string
+	DBUser                   string
+	DBPass                   string
+	DBHost                   string
+	DBPort                   int
+	DBName                   string
+	jwtKey                   string
+	CLOUDINARY_CLOUD_NAME    string
+	CLOUDINARY_API_KEY       string
+	CLOUDINARY_API_SECRET    string
+	CLOUDINARY_UPLOAD_FOLDER string
 }
 
 // membuat fungsi global untuk pemanggilan config
@@ -55,6 +63,24 @@ func ReadEnv() *DBConfig {
 		app.DBName = val
 		isRead = false
 	}
+	// untuk mencari env gambar
+	if val, found := os.LookupEnv("CLOUDINARY_CLOUD_NAME"); found {
+		app.CLOUDINARY_CLOUD_NAME = val
+		isRead = false
+	}
+	if val, found := os.LookupEnv("CLOUDINARY_API_KEY"); found {
+		// cnv, _ := strconv.Atoi(val)
+		app.CLOUDINARY_API_KEY = val
+		isRead = false
+	}
+	if val, found := os.LookupEnv("CLOUDINARY_API_SECRET"); found {
+		app.CLOUDINARY_API_SECRET = val
+		isRead = false
+	}
+	if val, found := os.LookupEnv("CLOUDINARY_UPLOAD_FOLDER"); found {
+		app.CLOUDINARY_UPLOAD_FOLDER = val
+		isRead = false
+	}
 
 	if isRead {
 		viper.AddConfigPath(".")
@@ -72,5 +98,10 @@ func ReadEnv() *DBConfig {
 		}
 	}
 	JWTKey = app.jwtKey
+	CLOUDINARY_CLOUD_NAME = app.CLOUDINARY_CLOUD_NAME
+	CLOUDINARY_API_KEY = app.CLOUDINARY_API_KEY
+	CLOUDINARY_API_SECRET = app.CLOUDINARY_API_SECRET
+	CLOUDINARY_UPLOAD_FOLDER = app.CLOUDINARY_UPLOAD_FOLDER
+
 	return &app
 }

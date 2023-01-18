@@ -18,13 +18,13 @@ func ImageUploadHelper(input interface{}) (string, error) {
 	defer cancel()
 
 	//create cloudinary instance
-	cld, err := cloudinary.NewFromParams(config.EnvCloudName(), config.EnvCloudAPIKey(), config.EnvCloudAPISecret())
+	cld, err := cloudinary.NewFromParams(config.CLOUDINARY_CLOUD_NAME, config.CLOUDINARY_API_KEY, config.CLOUDINARY_API_SECRET)
 	if err != nil {
 		return "", err
 	}
 
 	//upload file
-	uploadParam, err := cld.Upload.Upload(ctx, input, uploader.UploadParams{Folder: config.EnvCloudUploadFolder()})
+	uploadParam, err := cld.Upload.Upload(ctx, input, uploader.UploadParams{Folder: config.CLOUDINARY_UPLOAD_FOLDER})
 	if err != nil {
 		return "", err
 	}
