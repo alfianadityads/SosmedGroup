@@ -3,6 +3,8 @@ package config
 import (
 	"fmt"
 	"log"
+	cmData "sosmedapps/features/comment/data"
+	cData "sosmedapps/features/contents/data"
 	usrData "sosmedapps/features/user/data"
 
 	"gorm.io/driver/mysql"
@@ -23,5 +25,6 @@ func InitDB(dc DBConfig) *gorm.DB {
 
 func Migrate(db *gorm.DB) {
 	db.AutoMigrate(usrData.User{})
-	// db.AutoMigrate(contdata.Content{})
+	db.AutoMigrate(cData.Content{})
+	db.AutoMigrate(cmData.Comment{})
 }

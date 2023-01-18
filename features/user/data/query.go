@@ -94,7 +94,13 @@ func (uq *userQuery) Update(id int, updateData user.Core) (user.Core, error) {
 
 // Profile implements user.UserData
 func (uq *userQuery) Profile(id int) (user.Core, error) {
-	panic("unimplemented")
+	res := User{}
+	err := uq.db.Where("id = ?", id).First(&res).Error
+	if err != nil {
+		log.Println("query err", err.Error())
+		return user.Core{}, nil
+	}
+	return DataToCore(res), nil
 }
 
 // Delete implements user.UserData

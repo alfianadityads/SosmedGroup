@@ -1,80 +1,72 @@
 package data
 
-import (
-	"errors"
-	"log"
-	"sosmedapps/features/contents"
+// type contentQry struct {
+// 	db *gorm.DB
+// }
 
-	"gorm.io/gorm"
-)
+// func NewCont(db *gorm.DB) contents.ContentData {
+// 	return &contentQry{
+// 		db: db,
+// 	}
+// }
 
-type contentQry struct {
-	db *gorm.DB
-}
+// func (cq *contentQry) AddContent(userID uint, newContent contents.CoreContent) (contents.CoreContent, error) {
+// 	cnv := CoreToData(newContent)
+// 	cnv.UserID = uint(userID)
+// 	err := cq.db.Create(&cnv).Error
+// 	if err != nil {
+// 		return contents.CoreContent{}, err
+// 	}
+// 	newContent.ID = cnv.ID
 
-func NewCont(db *gorm.DB) contents.ContentData {
-	return &contentQry{
-		db: db,
-	}
-}
+// 	return newContent, nil
+// }
 
-func (cq *contentQry) AddContent(userID uint, newContent contents.CoreContent) (contents.CoreContent, error) {
-	cnv := CoreToData(newContent)
-	cnv.UserID = uint(userID)
-	err := cq.db.Create(&cnv).Error
-	if err != nil {
-		return contents.CoreContent{}, err
-	}
-	newContent.ID = cnv.ID
+// func (cq *contentQry) UpdateContent(userID uint, contentID uint, updateContent contents.CoreContent) (contents.CoreContent, error) {
 
-	return newContent, nil
-}
+// 	cnv := CoreToData(updateContent)
+// 	qry := cq.db.Where("user_id = ? AND id = ?", userID, contentID).Updates(&cnv)
 
-func (cq *contentQry) UpdateContent(userID uint, contentID uint, updateContent contents.CoreContent) (contents.CoreContent, error) {
+// 	affrows := qry.RowsAffected
+// 	if affrows <= 0 {
+// 		log.Println("no rows affected")
+// 		return contents.CoreContent{}, errors.New("no content has been changed")
+// 	}
 
-	cnv := CoreToData(updateContent)
-	qry := cq.db.Where("user_id = ? AND id = ?", userID, contentID).Updates(&cnv)
+// 	err := qry.Error
+// 	if err != nil {
+// 		log.Println("update query error", err.Error())
+// 		return contents.CoreContent{}, err
+// 	}
+// 	cToCore := cnv.ContentToCore()
+// 	return cToCore, nil
+// }
 
-	affrows := qry.RowsAffected
-	if affrows <= 0 {
-		log.Println("no rows affected")
-		return contents.CoreContent{}, errors.New("no content has been changed")
-	}
+// func (cq *contentQry) DeleteContent(userID uint, contentID uint) error {
+// 	qry := cq.db.Where("id = ? AND id_user = ?", contentID, userID).Delete(&Content{})
 
-	err := qry.Error
-	if err != nil {
-		log.Println("update query error", err.Error())
-		return contents.CoreContent{}, err
-	}
-	cToCore := cnv.ContentToCore()
-	return cToCore, nil
-}
+// 	affrows := qry.RowsAffected
+// 	if affrows >= 0 {
+// 		log.Println("now rows affected")
+// 		return errors.New("no content has been deleted")
+// 	}
 
-func (cq *contentQry) DeleteContent(userID uint, contentID uint) error {
-	qry := cq.db.Where("id = ? AND id_user = ?", contentID, userID).Delete(&Content{})
+// 	err := qry.Error
+// 	if err != nil {
+// 		log.Println("delete query error")
+// 		return errors.New("can't delete content")
+// 	}
+// 	return nil
+// }
 
-	affrows := qry.RowsAffected
-	if affrows >= 0 {
-		log.Println("now rows affected")
-		return errors.New("no content has been deleted")
-	}
+// func (cq *contentQry) DetailContent(contentID uint) ([]contents.CoreContent, error) {
+// 	tmp := []Content{}
+// 	if err := cq.db.Preload("User").Where("id = ?", contentID).First(&tmp); err != nil {
+// 		log.Println("get by ID content querry error", err.Error)
+// 		return ToCoreContent(tmp), err.Error
+// 	}
+// 	tmp2 := ToCoreContent(tmp)
+// 	return tmp2, nil
+// }
 
-	err := qry.Error
-	if err != nil {
-		log.Println("delete query error")
-		return errors.New("can't delete content")
-	}
-	return nil
-}
-
-func (cq *contentQry) DetailContent(contentID uint) ([]contents.CoreContent, error) {
-	tmp := []Content{}
-	if err := cq.db.Preload("User").Where("id = ?", contentID).First(&tmp); err != nil {
-		log.Println("get by ID content querry error", err.Error)
-		return ToCoreContent(tmp), err.Error
-	}
-	tmp2 := ToCoreContent(tmp)
-	return tmp2, nil
-}
-
-func (cq *contentQry) AllContent() ([]contents.CoreContent, error)
+// func (cq *contentQry) AllContent() ([]contents.CoreContent, error)

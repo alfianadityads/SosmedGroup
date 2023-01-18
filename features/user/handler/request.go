@@ -17,13 +17,12 @@ type RegisterRequest struct {
 }
 
 type UpdateRequest struct {
-	Name        string `json:"name" form:"name"`
-	Email       string `json:"email" form:"email"`
-	Image       string `json:"image" form:"image"`
-	Bio         string `json:"bio" form:"bio"`
-	UserName    string `json:"username" form:"username" validate:"required"`
-	Password    string `json:"password" form:"password"`
-	DateOfBirth string `json:"dateofbirth" form:"dateofbirth"`
+	Name     string `json:"name" form:"name"`
+	Email    string `json:"email" form:"email"`
+	Image    string `json:"image" form:"image"`
+	Bio      string `json:"bio" form:"bio"`
+	UserName string `json:"username" form:"username" validate:"required"`
+	Password string `json:"password" form:"password"`
 }
 
 func RequstToCore(dataUser interface{}) *user.Core {
@@ -47,7 +46,6 @@ func RequstToCore(dataUser interface{}) *user.Core {
 		res.Image = cnv.Image
 		res.UserName = cnv.UserName
 		res.Password = cnv.Password
-		res.DateOfBirth = cnv.DateOfBirth
 	default:
 		return nil
 	}
