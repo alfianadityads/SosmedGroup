@@ -13,6 +13,28 @@ type commentQuery struct {
 	db *gorm.DB
 }
 
+// GetCom implements comment.CommentData
+func (cq commentQuery) GetCom() ([]comment.Core, error) {
+	qry := []Comment{}
+	res := cq.db.Preload("User").Find(&qry)
+	if res.Error != nil {
+		return []comment.Core{}, errors.New("server error")
+	}
+	hasil := []comment.Core{}
+	for i := 0; i < len(qry); i++ {
+		hasil = append(hasil, DataToCore(qry[i]))
+		usrQry := User{}
+		err := cq.db.Where("id=?", qry[0].UserID).First(&usrQry).Error
+		if err != nil {
+			return []comment.Core{}, errors.New("server error")
+		}
+		hasil[i].User.ID = usrQry.ID
+		hasil[i].User.UserName = usrQry.UserName
+		hasil[i].User.Name = usrQry.Name
+	}
+	return hasil, nil
+}
+
 func New(db *gorm.DB) comment.CommentData {
 	return &commentQuery{
 		db: db,
@@ -20,8 +42,10 @@ func New(db *gorm.DB) comment.CommentData {
 }
 
 // NewComment implements comment.CommentData
-func (cq *commentQuery) NewComment(id int, newComment comment.Core) (comment.Core, error) {
-	data := CoreToData(newComment)
+func (cq *commentQuery) NewComment(id int, contentID uint, newComment string) (comment.Core, error) {
+	data := Comment{}
+	data.Comment = newComment
+	data.ContentID = contentID
 	data.UserID = uint(id)
 	err := cq.db.Create(&data).Error
 	if err != nil {
@@ -29,14 +53,19 @@ func (cq *commentQuery) NewComment(id int, newComment comment.Core) (comment.Cor
 		return comment.Core{}, errors.New("server error")
 	}
 	usrQry := User{}
-	err = cq.db.Where("id = ?", id).First(&usrQry).Error
+	err = cq.db.Where("id=?", id).First(&usrQry).Error
 	if err != nil {
-		log.Println("query error", err.Error())
 		return comment.Core{}, errors.New("server error")
 	}
-	newComment.OwnerName = usrQry.UserName
-	newComment.CreateAt = fmt.Sprintf("%d - %s - %d", data.CreatedAt.Day(), data.CreatedAt.Month(), data.CreatedAt.Year())
-	return newComment, nil
+	res := comment.Core{}
+	res.ID = data.ID
+	res.ContentID = contentID
+	res.User.ID = usrQry.ID
+	res.User.UserName = usrQry.UserName
+	res.User.Name = usrQry.Name
+	res.Comment = newComment
+	res.CreateAt = fmt.Sprintf("%d - %s - %d", data.CreatedAt.Day(), data.CreatedAt.Month(), data.CreatedAt.Year())
+	return res, nil
 
 }
 

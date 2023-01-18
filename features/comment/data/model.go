@@ -11,27 +11,19 @@ type Comment struct {
 	Comment   string
 	UserID    uint
 	ContentID uint
-}
-
-type Content struct {
-	gorm.Model
-	Content      string
-	ContentImage string
-	NumbComment  string
-	UserID       User
-	Comment      []Comment
+	User      User    `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:CASCADE"`
+	Content   Content `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:CASCADE"`
 }
 
 type User struct {
 	gorm.Model
 	Name     string
-	Email    string
-	Bio      string
-	Image    string
 	UserName string
-	Password string
-	Content  []Content
 	Comment  []Comment
+}
+
+type Content struct {
+	gorm.Model
 }
 
 func DataToCore(data Comment) comment.Core {

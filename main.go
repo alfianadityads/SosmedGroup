@@ -59,7 +59,9 @@ func main() {
 	e.DELETE("/contents/:id", cHdl.DeleteContent(), middleware.JWT([]byte(config.JWTKey)))
 
 	// COMMENT
-	e.PUT("/comments/:id", cmHdl.NewComment(), middleware.JWT([]byte(config.JWTKey)))
+	e.POST("/comments/:id", cmHdl.NewComment(), middleware.JWT([]byte(config.JWTKey)))
+
+	e.GET("/comments", cmHdl.GetCom())
 	// e.POST("/remote", helper.RemoteUpload)
 	// ========== Run Program ===========
 	if err := e.Start(":8000"); err != nil {

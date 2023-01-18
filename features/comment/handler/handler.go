@@ -12,6 +12,20 @@ type commentController struct {
 	srv comment.CommentService
 }
 
+// GetCom implements comment.CommentHandler
+func (cc *commentController) GetCom() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		res, err := cc.srv.GetCom()
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "internal server error"})
+		}
+		return c.JSON(http.StatusCreated, map[string]interface{}{
+			"data":    res,
+			"message": "success creating comment",
+		})
+	}
+}
+
 func New(ch comment.CommentService) comment.CommentHandler {
 	return &commentController{
 		srv: ch,
@@ -28,8 +42,7 @@ func (cc *commentController) NewComment() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "comment cannot allowed empty"})
 		}
-		input.ContentID = uint(contentID)
-		res, err := cc.srv.NewComment(c.Get("user"), *RequstToCore(input))
+		res, err := cc.srv.NewComment(c.Get("user"), uint(contentID), input.Comment)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "internal server error"})
 		}
