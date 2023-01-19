@@ -10,7 +10,7 @@ This is a golang rest api project group organized by Alterra Academy. This API i
 - Login
 - Show profile
 - Edit profile
-- Dactive account
+- Deactive account
 
 ## Content :
 - Show all content
