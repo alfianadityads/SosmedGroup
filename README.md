@@ -44,3 +44,16 @@ $ git clone https://github.com/icxz1/SosmedGroup.git
 ```
 $ cd SosmedGroup
 ```
+
+## Authors 👑
+
+-   Fauzi Sofyan  [![GitHub](https://img.shields.io/badge/fauzi-sofyan-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/fauzilax)
+
+-  Alfian Aditya [![GitHub](https://img.shields.io/badge/alfian-aditya-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/icxz1)
+
+ <p align="right">(<a href="#top">back to top</a>)</p>
+<h3>
+<p align="center">:copyright: January 2023 </p>
+</h3>
+<!-- end -->
+<!-- comment -->
