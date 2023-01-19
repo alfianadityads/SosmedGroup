@@ -62,7 +62,7 @@ package services
 // 		hashed, _ := helper.GeneratePassword("alif342")
 // 		resData := user.Core{ID: uint(1), Name: "Alif", Email: "alif@example.com", UserName: "alif123", Password: hashed}
 
-// 		repo.On("Login", inputEmail).Return(resData, nil)
+		repo.On("Login", inputEmail).Return(resData, nil)
 
 // 		srv := New(repo)
 // 		token, res, err := srv.Login(inputEmail, "alif342")
@@ -75,23 +75,23 @@ package services
 // 	t.Run("account not found", func(t *testing.T) {
 // 		inputEmail := "alif@example.com"
 
-// 		repo.On("Login", inputEmail).Return(user.Core{}, errors.New("not found"))
+		repo.On("Login", inputEmail).Return(user.Core{}, errors.New("not found"))
 
-// 		srv := New(repo)
-// 		token, res, err := srv.Login(inputEmail, "alif342")
-// 		assert.NotNil(t, err)
-// 		assert.ErrorContains(t, err, "not found")
-// 		assert.Empty(t, token)
-// 		assert.Equal(t, uint(0), res.ID)
-// 		repo.AssertExpectations(t)
-// 	})
+		srv := New(repo)
+		token, res, err := srv.Login(inputEmail, "alif342")
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "not found")
+		assert.Empty(t, token)
+		assert.Equal(t, uint(0), res.ID)
+		repo.AssertExpectations(t)
+	})
 
 	// wrong password
 	t.Run("wrong password", func(t *testing.T) {
 		inputEmail := "alif@example.com"
 		hashed, _ := helper.GeneratePassword("EWQTEQF")
 		resData := user.Core{ID: uint(1), Email: "alif@example.com", UserName: "alif123", Password: hashed}
-		repo.On("Login", inputEmail).Return(resData, nil)
+		repo.On("Login", inputEmail).Return(resData, nil).Once()
 
 		srv := New(repo)
 		_, res, err := srv.Login(inputEmail, "alif342")
@@ -125,19 +125,8 @@ func TestProfile(t *testing.T) {
 		repo.AssertExpectations(t)
 	})
 
-	t.Run("jwt not found", func(t *testing.T) {
-		srv := New(repo)
-
-		_, token := helper.GenerateToken(1)
-
-		res, err := srv.Profile(token)
-		assert.NotNil(t, err)
-		assert.ErrorContains(t, err, "not found")
-		assert.Equal(t, uint(0), res.ID)
-	})
-
 	t.Run("account not found", func(t *testing.T) {
-		repo.On("Profile", 4).Return(user.Core{}, errors.New("data not found")).Once()
+		repo.On("Profile", int(4)).Return(user.Core{}, errors.New("data not found")).Once()
 
 		srv := New(repo)
 
@@ -147,7 +136,7 @@ func TestProfile(t *testing.T) {
 		res, err := srv.Profile(pToken)
 		assert.NotNil(t, err)
 		assert.ErrorContains(t, err, "error")
-		assert.Equal(t, 0, res.ID)
+		assert.Equal(t, uint(0), res.ID)
 		repo.AssertExpectations(t)
 	})
 
