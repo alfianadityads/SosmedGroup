@@ -61,16 +61,16 @@ func (cc *commentController) Delete() echo.HandlerFunc {
 	}
 }
 
-// GetCom implements comment.CommentHandler
-func (cc *commentController) GetCom() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		res, err := cc.srv.GetCom()
-		if err != nil {
-			return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "internal server error"})
-		}
-		return c.JSON(http.StatusCreated, map[string]interface{}{
-			"data":    res,
-			"message": "success view all comment",
-		})
-	}
-}
+// // GetCom implements comment.CommentHandler
+// func (cc *commentController) GetCom() echo.HandlerFunc {
+// 	return func(c echo.Context) error {
+// 		res, err := cc.srv.GetCom()
+// 		if err != nil {
+// 			return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "internal server error"})
+// 		}
+// 		return c.JSON(http.StatusCreated, map[string]interface{}{
+// 			"data":    res,
+// 			"message": "success view all comment",
+// 		})
+// 	}
+// }
