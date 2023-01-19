@@ -13,13 +13,13 @@ type CommentService struct {
 	mock.Mock
 }
 
-// Delete provides a mock function with given fields: token
-func (_m *CommentService) Delete(token interface{}) error {
-	ret := _m.Called(token)
+// Delete provides a mock function with given fields: token, commentID
+func (_m *CommentService) Delete(token interface{}, commentID uint) error {
+	ret := _m.Called(token, commentID)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(interface{}) error); ok {
-		r0 = rf(token)
+	if rf, ok := ret.Get(0).(func(interface{}, uint) error); ok {
+		r0 = rf(token, commentID)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -27,20 +27,43 @@ func (_m *CommentService) Delete(token interface{}) error {
 	return r0
 }
 
-// NewComment provides a mock function with given fields: token, NewComment
-func (_m *CommentService) NewComment(token interface{}, NewComment comment.Core) (comment.Core, error) {
-	ret := _m.Called(token, NewComment)
+// GetCom provides a mock function with given fields:
+func (_m *CommentService) GetCom() ([]comment.Core, error) {
+	ret := _m.Called()
+
+	var r0 []comment.Core
+	if rf, ok := ret.Get(0).(func() []comment.Core); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]comment.Core)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// NewComment provides a mock function with given fields: token, contentID, NewComment
+func (_m *CommentService) NewComment(token interface{}, contentID uint, NewComment string) (comment.Core, error) {
+	ret := _m.Called(token, contentID, NewComment)
 
 	var r0 comment.Core
-	if rf, ok := ret.Get(0).(func(interface{}, comment.Core) comment.Core); ok {
-		r0 = rf(token, NewComment)
+	if rf, ok := ret.Get(0).(func(interface{}, uint, string) comment.Core); ok {
+		r0 = rf(token, contentID, NewComment)
 	} else {
 		r0 = ret.Get(0).(comment.Core)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(interface{}, comment.Core) error); ok {
-		r1 = rf(token, NewComment)
+	if rf, ok := ret.Get(1).(func(interface{}, uint, string) error); ok {
+		r1 = rf(token, contentID, NewComment)
 	} else {
 		r1 = ret.Error(1)
 	}

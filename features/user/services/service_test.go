@@ -86,25 +86,88 @@ package services
 // 		repo.AssertExpectations(t)
 // 	})
 
-// 	// wrong password
-// 	t.Run("wrong password", func(t *testing.T) {
-// 		inputEmail := "alif@example.com"
-// 		hashed, _ := helper.GeneratePassword("alif342")
-// 		resData := user.Core{ID: uint(1), Name: "Alif", Email: "alif@example.com", UserName: "alif123", Password: hashed}
-// 		repo.On("Login", inputEmail).Return(resData, nil)
+	// wrong password
+	t.Run("wrong password", func(t *testing.T) {
+		inputEmail := "alif@example.com"
+		hashed, _ := helper.GeneratePassword("EWQTEQF")
+		resData := user.Core{ID: uint(1), Email: "alif@example.com", UserName: "alif123", Password: hashed}
+		repo.On("Login", inputEmail).Return(resData, nil)
 
-// 		srv := New(repo)
-// 		token, res, err := srv.Login(inputEmail, "alif342")
-// 		assert.NotNil(t, err)
-// 		assert.ErrorContains(t, err, "wrong password")
-// 		assert.NotEmpty(t, token)
-// 		assert.Equal(t, uint(0), res.ID)
-// 		repo.AssertExpectations(t)
-// 	})
+		srv := New(repo)
+		_, res, err := srv.Login(inputEmail, "alif342")
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "password")
+		assert.Empty(t, nil)
+		assert.Equal(t, uint(0), res.ID)
+		repo.AssertExpectations(t)
+	})
 
 // }
 
-// func TestProfile(t *testing.T) {
+func TestProfile(t *testing.T) {
+	repo := mocks.NewUserData(t)
+
+	t.Run("success show profile", func(t *testing.T) {
+		resData := user.Core{ID: uint(1), Name: "Alif", Email: "alif@example.com", UserName: "alif123"}
+
+		repo.On("Profile", 1).Return(resData, nil).Once()
+
+		srv := New(repo)
+
+		_, token := helper.GenerateToken(1)
+
+		pToken := token.(*jwt.Token)
+		pToken.Valid = true
+
+		res, err := srv.Profile(pToken)
+		assert.Nil(t, err)
+		assert.Equal(t, resData.ID, res.ID)
+		repo.AssertExpectations(t)
+	})
+
+	t.Run("jwt not found", func(t *testing.T) {
+		srv := New(repo)
+
+		_, token := helper.GenerateToken(1)
+
+		res, err := srv.Profile(token)
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "not found")
+		assert.Equal(t, uint(0), res.ID)
+	})
+
+	t.Run("account not found", func(t *testing.T) {
+		repo.On("Profile", 4).Return(user.Core{}, errors.New("data not found")).Once()
+
+		srv := New(repo)
+
+		_, token := helper.GenerateToken(4)
+		pToken := token.(*jwt.Token)
+		pToken.Valid = true
+		res, err := srv.Profile(pToken)
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "error")
+		assert.Equal(t, 0, res.ID)
+		repo.AssertExpectations(t)
+	})
+
+	// internal server error
+	t.Run("internal server error", func(t *testing.T) {
+		repo.On("Profile", mock.Anything).Return(user.Core{}, errors.New("internal server error")).Once()
+		srv := New(repo)
+
+		_, token := helper.GenerateToken(1)
+		pToken := token.(*jwt.Token)
+		pToken.Valid = true
+		res, err := srv.Profile(pToken)
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "server")
+		assert.Equal(t, uint(0), res.ID)
+		repo.AssertExpectations(t)
+	})
+}
+
+// func TestUpdate(t *testing.T) {
 // 	repo := mocks.NewUserData(t)
 
 // 	t.Run("success show profile", func(t *testing.T) {

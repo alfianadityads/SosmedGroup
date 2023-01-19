@@ -57,6 +57,62 @@ func (_m *ContentData) AllContent() ([]contents.CoreContent, error) {
 	return r0, r1
 }
 
+// DeleteContent provides a mock function with given fields: userID, contentID
+func (_m *ContentData) DeleteContent(userID uint, contentID uint) error {
+	ret := _m.Called(userID, contentID)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(uint, uint) error); ok {
+		r0 = rf(userID, contentID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// DetailContent provides a mock function with given fields: contentID
+func (_m *ContentData) DetailContent(contentID uint) (contents.CoreContent, error) {
+	ret := _m.Called(contentID)
+
+	var r0 contents.CoreContent
+	if rf, ok := ret.Get(0).(func(uint) contents.CoreContent); ok {
+		r0 = rf(contentID)
+	} else {
+		r0 = ret.Get(0).(contents.CoreContent)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(uint) error); ok {
+		r1 = rf(contentID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// UpdateContent provides a mock function with given fields: userID, contentID, content
+func (_m *ContentData) UpdateContent(userID uint, contentID uint, content string) (string, error) {
+	ret := _m.Called(userID, contentID, content)
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func(uint, uint, string) string); ok {
+		r0 = rf(userID, contentID, content)
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(uint, uint, string) error); ok {
+		r1 = rf(userID, contentID, content)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 type mockConstructorTestingTNewContentData interface {
 	mock.TestingT
 	Cleanup(func())
