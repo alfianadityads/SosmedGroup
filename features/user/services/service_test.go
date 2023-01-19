@@ -315,9 +315,9 @@ func TestProfile(t *testing.T) {
 // 		pToken := token.(*jwt.Token)
 // 		pToken.Valid = true
 
-// 		err := srv.Delete(pToken)
-// 		assert.NotNil(t, err)
-// 		assert.ErrorContains(t, err, "not found")
-// 		repo.AssertExpectations(t)
-// 	})
-// }
+		err := srv.Delete(pToken)
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "not found")
+		repo.AssertExpectations(t)
+	})
+}
