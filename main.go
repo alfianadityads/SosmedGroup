@@ -50,7 +50,7 @@ func main() {
 	e.PUT("/users", usrHdl.Update(), middleware.JWT([]byte(config.JWTKey)))
 	e.DELETE("/users", usrHdl.Delete(), middleware.JWT([]byte(config.JWTKey)))
 	e.GET("/users", usrHdl.Profile(), middleware.JWT([]byte(config.JWTKey)))
-	e.GET("/users/search", usrHdl.Searching())
+	e.GET("/search", usrHdl.Searching())
 
 	e.GET("/logout", usrHdl.Logout(), middleware.JWT([]byte(config.JWTKey)))
 

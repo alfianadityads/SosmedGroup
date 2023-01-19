@@ -100,20 +100,10 @@ func (uq *userQuery) Profile(id int) (interface{}, error) {
 		log.Println("query err", err.Error())
 		return user.Core{}, nil
 	}
-	// Model:    gorm.Model{ID: data.ID},
-	// 	UserName: data.UserName,
-	// 	Bio:      data.Bio,
-	// 	Image:    data.Image,
-	// 	Content: ContentCore{
-	// 		ID:           data.Content.ID,
-	// 		Content:      data.Content.Content,
-	// 		ContentImage: data.Content.ContentImage,
-	// 		CreateAt:     data.Content.CreateAt,
-	// 		NumbComment:  data.Content.NumbComment,
-	// 	},
 	result := make(map[string]interface{})
 	result["id"] = res.ID
 	result["username"] = res.UserName
+	result["name"] = res.Name
 	result["bio"] = res.Bio
 	result["profilepicture"] = res.Image
 	result["content"] = make([]map[string]interface{}, len(res.Content))
@@ -151,7 +141,7 @@ func (uq *userQuery) Delete(id int) error {
 // Searching implements user.UserData
 func (uq *userQuery) Searching(quote string) ([]user.Core, error) {
 	find := []User{}
-	err := uq.db.Where("name LIKE ?", "%"+quote+"%").Find(&find).Error
+	err := uq.db.Where("email LIKE ?", "%"+quote+"%").Or("user_name LIKE ?", "%"+quote+"%").Find(&find).Error
 	if err != nil {
 		log.Println("no data processed", err.Error())
 		return []user.Core{}, errors.New("no user has delete")

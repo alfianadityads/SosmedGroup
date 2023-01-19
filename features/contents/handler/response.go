@@ -3,7 +3,7 @@ package handler
 import "sosmedapps/features/contents"
 
 type CoreContent struct {
-	ID           uint   `json:"id" from:"id"`
+	ID           uint   `json:"id_content" from:"id"`
 	Content      string `validate:"required" json:"content" from:"content"`
 	ContentImage string `json:"content_image" from:"content_image"`
 	CreateAt     string `json:"create_at" from:"create_at"`
@@ -12,20 +12,20 @@ type CoreContent struct {
 	Comment      []CommentCore
 }
 type CoreUser struct {
-	ID       uint   `json:"id" from:"id"`
+	ID       uint   `json:"id_user" from:"id"`
 	UserName string `json:"username" from:"username"`
 	Name     string `json:"name" from:"name"`
 	Image    string `json:"profilepicture" from:"profilepicture"`
 }
 type CommentCore struct {
-	ID       uint
-	UserName string
-	Comment  string
+	ID       uint   `json:"id_comment" from:"id"`
+	UserName string `json:"username" from:"username"`
+	Comment  string `json:"comment" from:"comment"`
 	Content  CoreContent
 }
 
 type AllContent struct {
-	ID           uint   `json:"id" from:"id"`
+	ID           uint   `json:"id_content" from:"id_content"`
 	Content      string `validate:"required" json:"content" from:"content"`
 	ContentImage string `json:"content_image" from:"content_image"`
 	CreateAt     string `json:"create_at" from:"create_at"`
