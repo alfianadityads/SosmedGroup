@@ -26,7 +26,7 @@ servers:
   # Added by API Auto Mocking Plugin
   - description: SwaggerHub API Auto Mocking
     url: https://virtserver.swaggerhub.com/icxz1/SosmedAPI/1.0.0
-  - url: link will be updated soon
+  - url: https://shirayuki.site
     description: primarry link
 
 paths:
@@ -67,7 +67,7 @@ paths:
                   message:
                     type: string
               example:
-                message: "Success create data"
+                message: "Success create account"
         400:
           $ref: '#/components/responses/400'
         500:
@@ -77,6 +77,7 @@ paths:
     post:
       tags:
         - "login"
+      summary: login account
       description: feature for verifying who a user is
       security:
         - JWTAuth: []
@@ -94,8 +95,7 @@ paths:
                   format: password
               example: 
                 username: "alfianad11"
-                passwoord: "alfian1234"
-                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJ1c2VySUQiOjR9.QTZxERh4CwC_UnL_eJvTi_A_qdLeBZ-IjR4nqoxjodk"
+                password: "alfian1234"
       responses:
         200:
           description: "success login"
@@ -105,10 +105,33 @@ paths:
                 $ref: '#/components/schemas/responseObject'
               example:
                 data: 
-                  - id_user: 1
-                    username: "alfianad11"
-                    name: "Alfian Aditya"
+                  id: 1
+                  name: "Alfian Aditya"
+                  username: "alfianad11"
+                  token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJ1c2VySUQiOjR9.QTZxERh4CwC_UnL_eJvTi_A_qdLeBZ-IjR4nqoxjodk"
                 message: "login success"
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: '#/components/responses/500'
+          
+  /logout:
+    get:
+      tags: 
+        - logout
+      summary: logout account
+      description: Logout profile
+      security: 
+        - JWTAuth: []
+      responses:
+        200:
+          description: "success logout"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseObject'
+              example:
+                message: "logout success"
         400:
           $ref: '#/components/responses/400'
         500:
@@ -129,28 +152,21 @@ paths:
             schema:
               type: object
               properties:
-                name:
+                content:
                   type: string
-                username:
-                  type: string
-                email:
-                  type: string
-                  format: email
-                bio:
-                  type: string
-                password:
-                  type: string
-                  format: password
                 image:
                   type: string
                   format: binary
-            example: 
-              name: "albert"
-              username: "albertenst"
-              bio: "Hello, my name is albert"
-              email: "albertxxx@gmail.com"
-              password: "secret"
-              image: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673881607/go-cloudinary/llhltxp55elirjkmlyld.png"
+          application/json:
+            schema:
+              type: object
+              example: 
+                name: "albert"
+                username: "albertenst"
+                bio: "Hello, my name is albert"
+                email: "albertxxx@gmail.com"
+                password: "secret"
+                image: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673881607/go-cloudinary/llhltxp55elirjkmlyld.png"
       responses:
         201:
           description: update success
@@ -159,6 +175,14 @@ paths:
               schema:
                 type: object
               example:
+                data:
+                  id : 1
+                  name: "albert"
+                  username: "albertenst"
+                  bio: "Hello, my name is albert"
+                  email: "albertxxx@gmail.com"
+                  password: "secret"
+                  image: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673881607/go-cloudinary/llhltxp55elirjkmlyld.png"
                 message: "update profile success"
         400:
           $ref: '#/components/responses/400'
@@ -202,44 +226,41 @@ paths:
                 type: object
                 example:
                   data:
-                    {
+                    id: 1
+                    bio: "Hello my name Alfian Aditya"
+                    username: "alfian2316"
+                    profilepicture: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673881607/go-cloudinary/llhltxp55elirjkmlyld.png"
+                    contents: [{
                       id: 1,
-                      bio: "Hello my name Alfian Aditya",
+                      content: "This morning I make good scramble egg for breakfast. Yumm!",
+                      image: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2006%3A40%3A47.jpg",
+                      create_at: "2023-01-16 13:56:42",
                       username: "alfian2316",
                       profilepicture: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673881607/go-cloudinary/llhltxp55elirjkmlyld.png",
-                        contents:
-                          {
-                            id_content: 1,
-                            content: "This morning I make good scramble egg for breakfast. Yumm!",
-                            image: "https://sosmedgroup2.s3.amazonaws.com/2023-01-16%2006%3A40%3A47.jpg",
-                            create_at: "2023-01-16 13:56:42.368",
-                            username: "alfian2316",
-                            profilepicture: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673881607/go-cloudinary/llhltxp55elirjkmlyld.png",
-                            comments: 3
-                          },
-                          {
-                            id_content: 2,
-                            content: "Good coffe = Good mood!",
-                            image: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673892611/go-cloudinary/gxjitapwl7pjcgskb3ph.jpg",
-                            create_at: "2023-01-16 15:30:42.368",
-                            username: "alfian2316",
-                            profilepicture: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673892611/go-cloudinary/gxjitapwl7pjcgskb3ph.jpg",
-                            comments: 3
-                          }
-                    }
+                      comments: 3
+                      },
+                      {
+                      id: 2,
+                      content: "Good coffe = Good mood!",
+                      image: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673892611/go-cloudinary/gxjitapwl7pjcgskb3ph.jpg",
+                      create_at: "2023-01-16 15:30:42",
+                      username: "alfian2316",
+                      profilepicture: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673892611/go-cloudinary/gxjitapwl7pjcgskb3ph.jpg",
+                      comments: 3
+                      }]
                   message: "success show profile"
         400:
           $ref: '#/components/responses/400'
         500:
           $ref: '#/components/responses/500'
           
-  /search:
+  /users/search:
     get:
       tags:
-        - search
+        - users
       summary: find user
-      description: finding user by username
-      security:
+      description: findding user by username
+      security: 
         - JWTAuth: []
       parameters: 
         - in: query
@@ -305,7 +326,12 @@ paths:
             application/json:
               schema:
                 type: object
-                example: 
+                example:
+                  data:
+                    id : 1
+                    content: "Beautiful day"
+                    image: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673881607/go-cloudinary/llhltxp55elirjkmlyld.png"
+                    create_at: "2023-01-16 15:30:42"
                   message: "success create content"
         400:
           $ref: '#/components/responses/400'
@@ -319,32 +345,32 @@ paths:
       description: "showing all contents"
       responses:
         200:
-          description: success show detail content
+          description: success show all content
           content:
             application/json:
               schema:
                 type: object
                 example:
                   data:
-                    - id_content: 1,
+                    - id: 1
                       content: "This morning I make good scramble egg for breakfast. Yumm!"
                       image: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673881607/go-cloudinary/llhltxp55elirjkmlyld.png"
-                      create_at: "2023-01-16 13:56:42.368"
-                      profilepicture: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673881607/go-cloudinary/llhltxp55elirjkmlyld.png"
+                      create_at: "2023-01-16 13:56:42"
                       users:
-                        - id_user: 1,
+                        - id_user: 1
                           username: "alfian2316"
-                      comment: 3,
-                    - id_content: 2,
+                          profilepicture: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673881607/go-cloudinary/llhltxp55elirjkmlyld.png"
+                      comments: 3
+                    - id: 2
                       content: "BBQ TIME!"
                       image: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673892611/go-cloudinary/gxjitapwl7pjcgskb3ph.jpg"
-                      create_at: "2023-01-16 13:56:42.368"
-                      profilepicture: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673892611/go-cloudinary/gxjitapwl7pjcgskb3ph.jpg"
+                      create_at: "2023-01-16 13:56:42"
                       users:
-                        - id_user: 2,
+                        - id_user: 2
                           username: "alfian2316"
-                      comment: 4,
-                  message: "success show detail content"
+                          profilepicture: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673892611/go-cloudinary/gxjitapwl7pjcgskb3ph.jpg"
+                      comments: 4
+                  message: "success show all content"
         400:
           $ref: '#/components/responses/400'
         500:
@@ -370,18 +396,11 @@ paths:
       requestBody:
         required: true
         content: 
-          multipart/form-data:
+          application/json:
             schema:
               type: object
-              properties:
-                content:
-                  type: string
-                image:
-                  type: string
-                  format: binary
-            example: 
-              content: "Good tea in the morning"
-              image: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673892611/go-cloudinary/gxjitapwl7pjcgskb3ph.jpg"
+              example: 
+                content: "Good tea in the morning"
       responses:
         200:
           description: update content success
@@ -390,7 +409,11 @@ paths:
               schema:
                 type: object
               example:
-                message: "success update data"
+                data:
+                  id: 1
+                  content: "Good tea in the morning"
+                  update_at: "2023-01-16 14:20:42"
+                message: "success update content"
         400:
           $ref: '#/components/responses/400'
         500:
@@ -449,22 +472,31 @@ paths:
                 type: object
                 example:
                   data:
-                    {
-                    id_content: 1,
-                    content: "This morning I make good scramble egg for breakfast. Yumm!",
-                    image: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673892611/go-cloudinary/gxjitapwl7pjcgskb3ph.jpg",
-                    create_at: "2023-01-16 13:56:42.368",
-                    username: "alfian2316",
-                    profilepicture: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673892611/go-cloudinary/gxjitapwl7pjcgskb3ph.jpg",
-                      comment:
-                          {
-                          id_comment: 1,
-                          comment: "Happy holiday",
-                          id_user: 2,
-                          username: "fatmakima",
+                    id: 1
+                    content: "This morning I make good scramble egg for breakfast. Yumm!"
+                    image: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673892611/go-cloudinary/gxjitapwl7pjcgskb3ph.jpg"
+                    comments: 2
+                    create_at: "2023-01-16 13:56:42"
+                    users:
+                      id_user: 1
+                      username: "alfian2316"
+                      profilepicture: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673892611/go-cloudinary/gxjitapwl7pjcgskb3ph.jpg"
+                    comment: 
+                      - id: 1
+                        comment: "Happy holiday"
+                        users:
+                          id_user: 2
+                          username: "fatmakima"
                           profilepicture: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673892611/go-cloudinary/gxjitapwl7pjcgskb3ph.jpg"
-                          }
-                      }
+                        created_at: "2023-01-16 13:57:42"
+                      - id: 2
+                        comment: "Happy holiday y all"
+                        users:
+                          id_user: 4
+                          username: "power"
+                          profilepicture: "https://res.cloudinary.com/dbg0177wd/image/upload/v1673892611/go-cloudinary/gxjitapwl7pjcgskb3ph.jpg"
+                        created_at: "2023-01-16 13:57:42"
+                          
                   message: "success show detail content"
         400:
           $ref: '#/components/responses/400'
