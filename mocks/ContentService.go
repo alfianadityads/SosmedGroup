@@ -74,14 +74,16 @@ func (_m *ContentService) DeleteContent(token interface{}, contentID uint) error
 }
 
 // DetailContent provides a mock function with given fields: contentID
-func (_m *ContentService) DetailContent(contentID uint) (contents.CoreContent, error) {
+func (_m *ContentService) DetailContent(contentID uint) (interface{}, error) {
 	ret := _m.Called(contentID)
 
-	var r0 contents.CoreContent
-	if rf, ok := ret.Get(0).(func(uint) contents.CoreContent); ok {
+	var r0 interface{}
+	if rf, ok := ret.Get(0).(func(uint) interface{}); ok {
 		r0 = rf(contentID)
 	} else {
-		r0 = ret.Get(0).(contents.CoreContent)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(interface{})
+		}
 	}
 
 	var r1 error

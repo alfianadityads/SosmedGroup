@@ -81,14 +81,16 @@ func (_m *UserService) Logout() (interface{}, error) {
 }
 
 // Profile provides a mock function with given fields: userToken
-func (_m *UserService) Profile(userToken interface{}) (user.Core, error) {
+func (_m *UserService) Profile(userToken interface{}) (interface{}, error) {
 	ret := _m.Called(userToken)
 
-	var r0 user.Core
-	if rf, ok := ret.Get(0).(func(interface{}) user.Core); ok {
+	var r0 interface{}
+	if rf, ok := ret.Get(0).(func(interface{}) interface{}); ok {
 		r0 = rf(userToken)
 	} else {
-		r0 = ret.Get(0).(user.Core)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(interface{})
+		}
 	}
 
 	var r1 error

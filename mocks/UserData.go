@@ -49,14 +49,16 @@ func (_m *UserData) Login(username string) (user.Core, error) {
 }
 
 // Profile provides a mock function with given fields: id
-func (_m *UserData) Profile(id int) (user.Core, error) {
+func (_m *UserData) Profile(id int) (interface{}, error) {
 	ret := _m.Called(id)
 
-	var r0 user.Core
-	if rf, ok := ret.Get(0).(func(int) user.Core); ok {
+	var r0 interface{}
+	if rf, ok := ret.Get(0).(func(int) interface{}); ok {
 		r0 = rf(id)
 	} else {
-		r0 = ret.Get(0).(user.Core)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(interface{})
+		}
 	}
 
 	var r1 error
