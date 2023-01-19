@@ -121,7 +121,7 @@ func TestProfile(t *testing.T) {
 
 		res, err := srv.Profile(pToken)
 		assert.Nil(t, err)
-		assert.Equal(t, resData.ID, res.ID)
+		assert.Equal(t, resData.ID, res)
 		repo.AssertExpectations(t)
 	})
 
@@ -136,7 +136,7 @@ func TestProfile(t *testing.T) {
 		res, err := srv.Profile(pToken)
 		assert.NotNil(t, err)
 		assert.ErrorContains(t, err, "error")
-		assert.Equal(t, uint(0), res.ID)
+		assert.Equal(t, uint(0), res)
 		repo.AssertExpectations(t)
 	})
 
@@ -151,7 +151,7 @@ func TestProfile(t *testing.T) {
 		res, err := srv.Profile(pToken)
 		assert.NotNil(t, err)
 		assert.ErrorContains(t, err, "server")
-		assert.Equal(t, uint(0), res.ID)
+		assert.Equal(t, uint(0), res)
 		repo.AssertExpectations(t)
 	})
 }
