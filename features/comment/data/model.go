@@ -19,6 +19,7 @@ type User struct {
 	gorm.Model
 	Name     string
 	UserName string
+	Image    string
 	Comment  []Comment
 }
 

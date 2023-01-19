@@ -13,19 +13,15 @@ type Content struct {
 	ContentImage string
 	NumbComment  uint
 	UserID       uint
+	User         User
 	Comment      []cmData.Comment
 }
 
 type User struct {
 	gorm.Model
 	Name     string
-	Email    string
-	Bio      string
 	Image    string
 	UserName string
-	Password string
-	Content  []Content
-	Comment  []cmData.Comment
 }
 
 func ContentToCore(data Content) contents.CoreContent {

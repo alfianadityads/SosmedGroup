@@ -122,7 +122,7 @@ func (usc *userServiceCase) Update(formHeader multipart.FileHeader, userToken in
 }
 
 // Profile implements user.UserService
-func (usc *userServiceCase) Profile(userToken interface{}) (user.Core, error) {
+func (usc *userServiceCase) Profile(userToken interface{}) (interface{}, error) {
 	id := helper.ExtractToken(userToken)
 	res, err := usc.qry.Profile(id)
 	if err != nil {

@@ -90,6 +90,7 @@ func (cc *contentController) DetailContent() echo.HandlerFunc {
 				return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "internal server error"})
 			}
 		}
+
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"data":    res,
 			"message": "success show detail",

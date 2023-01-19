@@ -43,3 +43,13 @@ func AllContentResponse(data contents.CoreContent) AllContent {
 		Users:        CoreUser(data.Users),
 	}
 }
+
+// type Detail struct {
+// 	ID        uint                     `mapstructure:"Name"`
+// 	Content   string                   `mapstructure:"content"`
+// 	Image     string                   `mapstructure:"image"`
+// 	Comments  int                      `mapstructure:"comments"`
+// 	Create_at string                   `mapstructure:"create_at"`
+// 	Users     interface{}              `mapstructure:"users"`
+// 	Comment   []map[string]interface{} `mapstructure:"comment"`
+// }

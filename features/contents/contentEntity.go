@@ -41,7 +41,7 @@ type ContentHandler interface {
 type ContentService interface {
 	AddContent(token interface{}, fileHeader multipart.FileHeader, newContent CoreContent) (CoreContent, error)
 	UpdateContent(token interface{}, contentID uint, content string) (string, error)
-	DetailContent(contentID uint) (CoreContent, error)
+	DetailContent(contentID uint) (interface{}, error)
 	AllContent() ([]CoreContent, error)
 	DeleteContent(token interface{}, contentID uint) error
 }
@@ -49,7 +49,7 @@ type ContentService interface {
 type ContentData interface {
 	AddContent(userID uint, newContent CoreContent) (CoreContent, error)
 	UpdateContent(userID uint, contentID uint, content string) (string, error)
-	DetailContent(contentID uint) (CoreContent, error)
+	DetailContent(contentID uint) (interface{}, error)
 	AllContent() ([]CoreContent, error)
 	DeleteContent(userID uint, contentID uint) error
 }
