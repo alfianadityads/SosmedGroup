@@ -1,8 +1,7 @@
 package data
 
 import (
-	cmData "sosmedapps/features/comment/data"
-	cData "sosmedapps/features/contents/data"
+	"sosmedapps/features/contents/data"
 	"sosmedapps/features/user"
 
 	"gorm.io/gorm"
@@ -16,9 +15,17 @@ type User struct {
 	Image    string
 	UserName string
 	Password string
-	Content  []cData.Content
-	Comment  []cmData.Comment
+	Content  []data.Content `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
+
+// type Content struct {
+// 	gorm.Model
+// 	Content      string
+// 	ContentImage string
+// 	CreateAt     string
+// 	NumbComment  uint
+// 	User         User `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:CASCADE"`
+// }
 
 func DataToCore(data User) user.Core {
 	return user.Core{
@@ -29,8 +36,7 @@ func DataToCore(data User) user.Core {
 		Image:    data.Image,
 		UserName: data.UserName,
 		Password: data.Password,
-		Content:  data.Content,
-		Comment:  data.Comment,
+		Content:  []user.ContentCore{},
 	}
 }
 
@@ -43,7 +49,6 @@ func CoreToData(core user.Core) User {
 		Image:    core.Image,
 		UserName: core.UserName,
 		Password: core.Password,
-		Content:  core.Content,
-		Comment:  core.Comment,
+		Content:  []data.Content{},
 	}
 }

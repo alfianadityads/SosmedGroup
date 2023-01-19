@@ -7,18 +7,27 @@ import (
 )
 
 type CoreContent struct {
-	ID           uint
+	ID           uint   `json:"id" from:"id"`
 	Content      string `validate:"required" json:"content" from:"content"`
 	ContentImage string `json:"content_image" from:"content_image"`
-	CreateAt     string
-	NumbComment  uint
+	CreateAt     string `json:"create_at" from:"create_at"`
+	NumbComment  uint   `json:"comment" from:"comment"`
 	Users        CoreUser
+	Comment      []CommentCore
 }
 
 type CoreUser struct {
+	ID       uint   `json:"id" from:"id"`
+	UserName string `json:"username" from:"username"`
+	Name     string `json:"name" from:"name"`
+	Image    string `json:"profilepicture" from:"profilepicture"`
+}
+
+type CommentCore struct {
 	ID       uint
 	UserName string
-	Name     string
+	Comment  string
+	Content  CoreContent
 }
 
 type ContentHandler interface {

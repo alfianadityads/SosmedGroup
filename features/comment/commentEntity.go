@@ -3,17 +3,17 @@ package comment
 import "github.com/labstack/echo/v4"
 
 type Core struct {
-	ID        uint
-	Comment   string
-	ContentID uint
-	CreateAt  string
+	ID        uint   `json:"id" from:"id"`
+	Comment   string `json:"comment" from:"comment"`
+	ContentID uint   `json:"content_id" from:"content_id"`
+	CreateAt  string `json:"create_at" from:"create_at"`
 	User      UserCore
 }
 
 type UserCore struct {
-	ID       uint
-	UserName string
-	Name     string
+	ID       uint   `json:"id" from:"id"`
+	UserName string `json:"username" from:"username"`
+	Name     string `json:"name" from:"name"`
 }
 
 type CommentHandler interface {

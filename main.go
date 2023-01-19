@@ -50,6 +50,9 @@ func main() {
 	e.PUT("/users", usrHdl.Update(), middleware.JWT([]byte(config.JWTKey)))
 	e.DELETE("/users", usrHdl.Delete(), middleware.JWT([]byte(config.JWTKey)))
 	e.GET("/users", usrHdl.Profile(), middleware.JWT([]byte(config.JWTKey)))
+	e.GET("/users/search", usrHdl.Searching())
+
+	e.GET("/logout", usrHdl.Logout(), middleware.JWT([]byte(config.JWTKey)))
 
 	//CONTENT
 	e.POST("/contents", cHdl.AddContent(), middleware.JWT([]byte(config.JWTKey)))
@@ -61,7 +64,7 @@ func main() {
 	// COMMENT
 	e.POST("/comments/:id", cmHdl.NewComment(), middleware.JWT([]byte(config.JWTKey)))
 	e.DELETE("/comments/:id", cmHdl.Delete(), middleware.JWT([]byte(config.JWTKey)))
-	e.GET("/comments", cmHdl.GetCom())
+	e.GET("/comments/all", cmHdl.GetCom())
 
 	// e.POST("/remote", helper.RemoteUpload)
 	// ========== Run Program ===========

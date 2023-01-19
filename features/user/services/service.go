@@ -2,11 +2,15 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"mime/multipart"
 	"sosmedapps/features/user"
 	"sosmedapps/helper"
 	"strings"
+	"time"
+
+	"github.com/golang-jwt/jwt"
 )
 
 type userServiceCase struct {
@@ -140,4 +144,32 @@ func (usc *userServiceCase) Delete(userToken interface{}) error {
 		return errors.New("query error, delete account fail")
 	}
 	return nil
+}
+
+// Searching implements user.UserService
+func (usc *userServiceCase) Searching(quote string) ([]user.Core, error) {
+	res, err := usc.qry.Searching(quote)
+	if err != nil {
+		log.Println("query error", err.Error())
+		return []user.Core{}, errors.New("server error")
+	}
+	return res, nil
+}
+
+// Logout implements user.UserService
+func (usc *userServiceCase) Logout() (interface{}, error) {
+	token := jwt.New(jwt.SigningMethodHS256)
+
+	// Set the expiration time to a time in the past
+	token.Claims = jwt.MapClaims{
+		"exp": time.Now().Add(time.Duration(-1) * time.Minute).Unix(),
+	}
+	// Sign and get the complete encoded token as a string
+	tokenString, err := token.SignedString([]byte("secret"))
+	if err != nil {
+		log.Println("log out fail", err.Error())
+		return "", errors.New("logout fail, server error")
+	}
+	fmt.Println(tokenString)
+	return tokenString, nil
 }

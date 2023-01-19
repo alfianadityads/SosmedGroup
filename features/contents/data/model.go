@@ -37,6 +37,7 @@ func ContentToCore(data Content) contents.CoreContent {
 		Users: contents.CoreUser{
 			ID: data.UserID,
 		},
+		Comment: []contents.CommentCore{},
 	}
 }
 
