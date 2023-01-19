@@ -2,8 +2,6 @@ package user
 
 import (
 	"mime/multipart"
-	cmData "sosmedapps/features/comment/data"
-	cData "sosmedapps/features/contents/data"
 
 	"github.com/labstack/echo/v4"
 )
@@ -17,8 +15,16 @@ type Core struct {
 	Image    string
 	UserName string
 	Password string
-	Content  []cData.Content
-	Comment  []cmData.Comment
+	Content  []ContentCore
+}
+
+type ContentCore struct {
+	ID           uint
+	Content      string
+	ContentImage string
+	CreateAt     string
+	NumbComment  uint
+	User         Core
 }
 
 type UserHandler interface {
@@ -27,6 +33,8 @@ type UserHandler interface {
 	Profile() echo.HandlerFunc
 	Update() echo.HandlerFunc
 	Delete() echo.HandlerFunc
+	Searching() echo.HandlerFunc
+	Logout() echo.HandlerFunc
 }
 
 type UserService interface {
@@ -35,6 +43,8 @@ type UserService interface {
 	Profile(userToken interface{}) (Core, error)
 	Update(formHeader multipart.FileHeader, userToken interface{}, updateData Core) (Core, error)
 	Delete(userToken interface{}) error
+	Searching(quote string) ([]Core, error)
+	Logout() (interface{}, error)
 }
 
 type UserData interface {
@@ -43,4 +53,5 @@ type UserData interface {
 	Profile(id int) (Core, error)
 	Update(id int, updateData Core) (Core, error)
 	Delete(id int) error
+	Searching(quote string) ([]Core, error)
 }

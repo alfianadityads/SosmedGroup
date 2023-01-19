@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 	"sosmedapps/features/comment"
 	"strconv"
@@ -33,9 +34,10 @@ func (cc *commentController) NewComment() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "internal server error"})
 		}
+		log.Println(res)
 		return c.JSON(http.StatusCreated, map[string]interface{}{
-			"data":    res,
-			"message": "success creating comment",
+			// "data":    res,
+			"message": "success create comment",
 		})
 	}
 }
@@ -54,7 +56,7 @@ func (cc *commentController) Delete() echo.HandlerFunc {
 			}
 		}
 		return c.JSON(http.StatusOK, map[string]interface{}{
-			"message": "deleting comment successful",
+			"message": "delete comment success",
 		})
 	}
 }
@@ -68,7 +70,7 @@ func (cc *commentController) GetCom() echo.HandlerFunc {
 		}
 		return c.JSON(http.StatusCreated, map[string]interface{}{
 			"data":    res,
-			"message": "success creating comment",
+			"message": "success view all comment",
 		})
 	}
 }

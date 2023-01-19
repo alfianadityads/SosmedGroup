@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 	"sosmedapps/features/contents"
 	"sosmedapps/helper"
@@ -47,9 +48,10 @@ func (cc *contentController) AddContent() echo.HandlerFunc {
 				return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "internal server error"})
 			}
 		}
+		log.Println(res)
 		return c.JSON(http.StatusCreated, map[string]interface{}{
-			"data":    res,
-			"message": "success creating new contents",
+			// "data":    res,
+			"message": "success create content",
 		})
 	}
 }
@@ -63,8 +65,12 @@ func (cc *contentController) AllContent() echo.HandlerFunc {
 				return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "internal server error"})
 			}
 		}
+		result := []AllContent{}
+		for i := 0; i < len(res); i++ {
+			result = append(result, AllContentResponse(res[i]))
+		}
 		return c.JSON(http.StatusOK, map[string]interface{}{
-			"data":    res,
+			"data":    result,
 			"message": "success",
 		})
 
@@ -112,7 +118,7 @@ func (cc *contentController) UpdateContent() echo.HandlerFunc {
 		}
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"data":    res,
-			"message": "success show detail",
+			"message": "success update data",
 		})
 	}
 }
@@ -131,7 +137,7 @@ func (cc *contentController) DeleteContent() echo.HandlerFunc {
 			}
 		}
 		return c.JSON(http.StatusOK, map[string]interface{}{
-			"message": "deleting content successful",
+			"message": "success delete content from user post",
 		})
 	}
 }

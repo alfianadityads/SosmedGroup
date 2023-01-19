@@ -34,7 +34,7 @@ func (cq *contentQry) AddContent(userID uint, newContent contents.CoreContent) (
 // AllContent implements contents.ContentData
 func (cq *contentQry) AllContent() ([]contents.CoreContent, error) {
 	res := []Content{}
-	err := cq.db.Find(&res).Error
+	err := cq.db.Preload("Comment").Find(&res).Error
 	if err != nil {
 		log.Println("query error", err.Error())
 		return []contents.CoreContent{}, errors.New("server error")
@@ -50,6 +50,8 @@ func (cq *contentQry) AllContent() ([]contents.CoreContent, error) {
 		}
 		hasil[i].Users.Name = qry.Name
 		hasil[i].Users.UserName = qry.UserName
+		hasil[i].Users.Image = qry.Image
+		hasil[i].NumbComment = uint(len(res[i].Comment))
 		hasil[i].CreateAt = fmt.Sprintf("%d - %s - %d", res[i].CreatedAt.Day(), res[i].CreatedAt.Month(), res[i].CreatedAt.Year())
 	}
 	return hasil, nil
@@ -58,7 +60,7 @@ func (cq *contentQry) AllContent() ([]contents.CoreContent, error) {
 // DetailContent implements contents.ContentData
 func (cq *contentQry) DetailContent(contentID uint) (contents.CoreContent, error) {
 	res := Content{}
-	err := cq.db.Where("id=?", contentID).First(&res).Error
+	err := cq.db.Preload("Comment").Where("id=?", contentID).First(&res).Error
 	if err != nil {
 		log.Println("no data found")
 		return contents.CoreContent{}, errors.New("data not found")
@@ -70,6 +72,8 @@ func (cq *contentQry) DetailContent(contentID uint) (contents.CoreContent, error
 		return contents.CoreContent{}, errors.New("data not found")
 	}
 	hasil := ContentToCore(res)
+	hasil.NumbComment = uint(len(res.Comment))
+	hasil.Users.Image = qry.Image
 	hasil.Users.Name = qry.Name
 	hasil.Users.UserName = qry.UserName
 	hasil.CreateAt = fmt.Sprintf("%d - %s - %d", res.CreatedAt.Day(), res.CreatedAt.Month(), res.CreatedAt.Year())

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 	"sosmedapps/features/user"
 	"sosmedapps/helper"
@@ -38,8 +39,9 @@ func (uc *userController) Register() echo.HandlerFunc {
 			}
 			return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "internal server error"})
 		}
+		log.Println(res)
 		return c.JSON(http.StatusCreated, map[string]interface{}{
-			"data":    res,
+			// "data":    RegisterResponse(res),
 			"message": "success creating account",
 		})
 
@@ -67,7 +69,7 @@ func (uc *userController) Login() echo.HandlerFunc {
 			}
 		}
 		return c.JSON(http.StatusOK, map[string]interface{}{
-			"data":    res,
+			"data":    LoginResponse(res),
 			"token":   tokenGen,
 			"message": "login success",
 		})
@@ -83,7 +85,7 @@ func (uc *userController) Profile() echo.HandlerFunc {
 		}
 		return c.JSON(http.StatusCreated, map[string]interface{}{
 			"data":    res,
-			"message": "success updating account",
+			"message": "success show profile",
 		})
 
 	}
@@ -99,7 +101,7 @@ func (uc *userController) Delete() echo.HandlerFunc {
 			})
 		}
 		return c.JSON(http.StatusOK, map[string]interface{}{
-			"message": "deleting account successful",
+			"message": "delete data user success",
 		})
 	}
 }
@@ -135,13 +137,48 @@ func (uc *userController) Update() echo.HandlerFunc {
 				return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "internal server error"})
 			}
 		}
+		log.Println(res)
 		return c.JSON(http.StatusCreated, map[string]interface{}{
-			"data":    res,
-			"message": "success updating account",
+			// "data":    res,
+			"message": "update profile success",
 		})
 		// if fileType == "image/png" || fileType == "image/jpeg" {
 		// } else {
 		// 	return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "only jpg or png file can be upload"})
 		// }
+	}
+}
+
+// Searching implements user.UserHandler
+func (uc *userController) Searching() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		quotes := c.QueryParam("q")
+		log.Println(quotes)
+		res, err := uc.srv.Searching(quotes)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "user not found"})
+		}
+		result := []Search{}
+		for i := 0; i < len(res); i++ {
+			result = append(result, SearchResponse(res[i]))
+		}
+		return c.JSON(http.StatusCreated, map[string]interface{}{
+			"data":    result,
+			"message": "success mencari data",
+		})
+	}
+}
+
+// Logout implements user.UserHandler
+func (uc *userController) Logout() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		res, err := uc.srv.Logout()
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "user not found"})
+		}
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"token":   res,
+			"message": "success logout",
+		})
 	}
 }

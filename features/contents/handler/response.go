@@ -1,0 +1,45 @@
+package handler
+
+import "sosmedapps/features/contents"
+
+type CoreContent struct {
+	ID           uint   `json:"id" from:"id"`
+	Content      string `validate:"required" json:"content" from:"content"`
+	ContentImage string `json:"content_image" from:"content_image"`
+	CreateAt     string `json:"create_at" from:"create_at"`
+	NumbComment  uint   `json:"comment" from:"comment"`
+	Users        CoreUser
+	Comment      []CommentCore
+}
+type CoreUser struct {
+	ID       uint   `json:"id" from:"id"`
+	UserName string `json:"username" from:"username"`
+	Name     string `json:"name" from:"name"`
+	Image    string `json:"profilepicture" from:"profilepicture"`
+}
+type CommentCore struct {
+	ID       uint
+	UserName string
+	Comment  string
+	Content  CoreContent
+}
+
+type AllContent struct {
+	ID           uint   `json:"id" from:"id"`
+	Content      string `validate:"required" json:"content" from:"content"`
+	ContentImage string `json:"content_image" from:"content_image"`
+	CreateAt     string `json:"create_at" from:"create_at"`
+	Users        CoreUser
+	NumbComment  uint `json:"comment" from:"comment"`
+}
+
+func AllContentResponse(data contents.CoreContent) AllContent {
+	return AllContent{
+		ID:           data.ID,
+		Content:      data.Content,
+		ContentImage: data.ContentImage,
+		CreateAt:     data.CreateAt,
+		NumbComment:  data.NumbComment,
+		Users:        CoreUser(data.Users),
+	}
+}
