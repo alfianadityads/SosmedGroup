@@ -57,15 +57,40 @@ func (_m *UserService) Login(username string, password string) (string, user.Cor
 	return r0, r1, r2
 }
 
+// Logout provides a mock function with given fields:
+func (_m *UserService) Logout() (interface{}, error) {
+	ret := _m.Called()
+
+	var r0 interface{}
+	if rf, ok := ret.Get(0).(func() interface{}); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(interface{})
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Profile provides a mock function with given fields: userToken
-func (_m *UserService) Profile(userToken interface{}) (user.Core, error) {
+func (_m *UserService) Profile(userToken interface{}) (interface{}, error) {
 	ret := _m.Called(userToken)
 
-	var r0 user.Core
-	if rf, ok := ret.Get(0).(func(interface{}) user.Core); ok {
+	var r0 interface{}
+	if rf, ok := ret.Get(0).(func(interface{}) interface{}); ok {
 		r0 = rf(userToken)
 	} else {
-		r0 = ret.Get(0).(user.Core)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(interface{})
+		}
 	}
 
 	var r1 error
@@ -92,6 +117,29 @@ func (_m *UserService) Register(newUser user.Core) (user.Core, error) {
 	var r1 error
 	if rf, ok := ret.Get(1).(func(user.Core) error); ok {
 		r1 = rf(newUser)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// Searching provides a mock function with given fields: quote
+func (_m *UserService) Searching(quote string) ([]user.Core, error) {
+	ret := _m.Called(quote)
+
+	var r0 []user.Core
+	if rf, ok := ret.Get(0).(func(string) []user.Core); ok {
+		r0 = rf(quote)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]user.Core)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(quote)
 	} else {
 		r1 = ret.Error(1)
 	}

@@ -13,13 +13,13 @@ type CommentData struct {
 	mock.Mock
 }
 
-// Delete provides a mock function with given fields: commentID
-func (_m *CommentData) Delete(commentID int) error {
-	ret := _m.Called(commentID)
+// Delete provides a mock function with given fields: userID, commentID
+func (_m *CommentData) Delete(userID uint, commentID uint) error {
+	ret := _m.Called(userID, commentID)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(int) error); ok {
-		r0 = rf(commentID)
+	if rf, ok := ret.Get(0).(func(uint, uint) error); ok {
+		r0 = rf(userID, commentID)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -27,20 +27,43 @@ func (_m *CommentData) Delete(commentID int) error {
 	return r0
 }
 
-// NewComment provides a mock function with given fields: userID, newComment
-func (_m *CommentData) NewComment(userID int, newComment comment.Core) (comment.Core, error) {
-	ret := _m.Called(userID, newComment)
+// GetCom provides a mock function with given fields:
+func (_m *CommentData) GetCom() ([]comment.Core, error) {
+	ret := _m.Called()
+
+	var r0 []comment.Core
+	if rf, ok := ret.Get(0).(func() []comment.Core); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]comment.Core)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// NewComment provides a mock function with given fields: userID, contentID, newComment
+func (_m *CommentData) NewComment(userID int, contentID uint, newComment string) (comment.Core, error) {
+	ret := _m.Called(userID, contentID, newComment)
 
 	var r0 comment.Core
-	if rf, ok := ret.Get(0).(func(int, comment.Core) comment.Core); ok {
-		r0 = rf(userID, newComment)
+	if rf, ok := ret.Get(0).(func(int, uint, string) comment.Core); ok {
+		r0 = rf(userID, contentID, newComment)
 	} else {
 		r0 = ret.Get(0).(comment.Core)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int, comment.Core) error); ok {
-		r1 = rf(userID, newComment)
+	if rf, ok := ret.Get(1).(func(int, uint, string) error); ok {
+		r1 = rf(userID, contentID, newComment)
 	} else {
 		r1 = ret.Error(1)
 	}
