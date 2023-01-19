@@ -72,6 +72,7 @@ func ProfileResponse(data User) interface{} {
 	return User{
 		Model:    gorm.Model{ID: data.ID},
 		UserName: data.UserName,
+		Name:     data.Name,
 		Bio:      data.Bio,
 		Image:    data.Image,
 		Content: ContentCore{
