@@ -28,4 +28,19 @@ This is a golang rest api project group organized by Alterra Academy. This API i
 
 # API Documentations
 
-[Click here](https://app.swaggerhub.com/apis-docs/icxz1/SosmedAPI/1.0.0#/)
+[Click here](https://app.swaggerhub.com/apis-docs/icxz1/SosmedAPI/1.0.0#/) to see documentations.
+
+
+## How to Install
+
+- Clone it
+
+```
+$ git clone https://github.com/icxz1/SosmedGroup.git
+```
+
+- Go to directory
+
+```
+$ cd SosmedGroup
+```
