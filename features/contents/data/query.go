@@ -60,13 +60,38 @@ func (cq *contentQry) AllContent() ([]contents.CoreContent, error) {
 // DetailContent implements contents.ContentData
 func (cq *contentQry) DetailContent(contentID uint) (interface{}, error) {
 	res := Content{}
-	err := cq.db.Preload("Comment").Where("id=?", contentID).First(&res).Error
+	err := cq.db.Preload("User").Preload("Comment").Preload("Comment.User").Where("id=?", contentID).First(&res).Error
 	if err != nil {
 		log.Println("no data found")
 		return contents.CoreContent{}, errors.New("data not found")
 	}
-	res.NumbComment = uint(len(res.Comment))
-	return res, nil
+	result := make(map[string]interface{})
+	result["id"] = res.ID
+	result["content"] = res.Content
+	result["image"] = res.ContentImage
+	result["create_at"] = res.CreatedAt
+	resultUser := make(map[string]interface{})
+	resultUser["id_user"] = res.User.ID
+	resultUser["username"] = res.User.UserName
+	resultUser["profilepicture"] = res.User.Image
+	result["users"] = resultUser
+	result["comments"] = len(res.Comment)
+	result["comment"] = make([]map[string]interface{}, len(res.Comment))
+
+	for i, element := range res.Comment {
+		m := make(map[string]interface{})
+		m["id"] = element.ID
+		m["comment"] = element.Comment
+		u := make(map[string]interface{})
+		u["id_users"] = element.User.ID
+		u["username"] = element.User.UserName
+		u["profilepicture"] = element.User.Image
+		m["users"] = u
+		m["create_at"] = element.CreatedAt
+		result["comment"].([]map[string]interface{})[i] = m
+	}
+
+	return result, nil
 }
 
 // UpdateContent implements contents.ContentData
