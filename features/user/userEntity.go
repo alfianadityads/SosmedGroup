@@ -40,7 +40,7 @@ type UserHandler interface {
 type UserService interface {
 	Register(newUser Core) (Core, error)
 	Login(username, password string) (string, Core, error)
-	Profile(userToken interface{}) (Core, error)
+	Profile(userToken interface{}) (interface{}, error)
 	Update(formHeader multipart.FileHeader, userToken interface{}, updateData Core) (Core, error)
 	Delete(userToken interface{}) error
 	Searching(quote string) ([]Core, error)
@@ -50,7 +50,7 @@ type UserService interface {
 type UserData interface {
 	Register(newUser Core) (Core, error)
 	Login(username string) (Core, error)
-	Profile(id int) (Core, error)
+	Profile(id int) (interface{}, error)
 	Update(id int, updateData Core) (Core, error)
 	Delete(id int) error
 	Searching(quote string) ([]Core, error)

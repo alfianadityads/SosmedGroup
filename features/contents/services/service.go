@@ -64,7 +64,7 @@ func (csc *contentServiceCase) AllContent() ([]contents.CoreContent, error) {
 }
 
 // DetailContent implements contents.ContentService
-func (csc *contentServiceCase) DetailContent(contentID uint) (contents.CoreContent, error) {
+func (csc *contentServiceCase) DetailContent(contentID uint) (interface{}, error) {
 	res, err := csc.qry.DetailContent(contentID)
 	if err != nil {
 		log.Println("query error")

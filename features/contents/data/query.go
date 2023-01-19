@@ -58,26 +58,15 @@ func (cq *contentQry) AllContent() ([]contents.CoreContent, error) {
 }
 
 // DetailContent implements contents.ContentData
-func (cq *contentQry) DetailContent(contentID uint) (contents.CoreContent, error) {
+func (cq *contentQry) DetailContent(contentID uint) (interface{}, error) {
 	res := Content{}
 	err := cq.db.Preload("Comment").Where("id=?", contentID).First(&res).Error
 	if err != nil {
 		log.Println("no data found")
 		return contents.CoreContent{}, errors.New("data not found")
 	}
-	qry := User{}
-	err = cq.db.Where("id=?", res.UserID).First(&qry).Error
-	if err != nil {
-		log.Println("no data found")
-		return contents.CoreContent{}, errors.New("data not found")
-	}
-	hasil := ContentToCore(res)
-	hasil.NumbComment = uint(len(res.Comment))
-	hasil.Users.Image = qry.Image
-	hasil.Users.Name = qry.Name
-	hasil.Users.UserName = qry.UserName
-	hasil.CreateAt = fmt.Sprintf("%d - %s - %d", res.CreatedAt.Day(), res.CreatedAt.Month(), res.CreatedAt.Year())
-	return hasil, nil
+	res.NumbComment = uint(len(res.Comment))
+	return res, nil
 }
 
 // UpdateContent implements contents.ContentData

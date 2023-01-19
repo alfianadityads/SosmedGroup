@@ -93,23 +93,43 @@ func (uq *userQuery) Update(id int, updateData user.Core) (user.Core, error) {
 }
 
 // Profile implements user.UserData
-func (uq *userQuery) Profile(id int) (user.Core, error) {
+func (uq *userQuery) Profile(id int) (interface{}, error) {
 	res := User{}
-	err := uq.db.Preload("Content").Where("id = ?", id).First(&res).Error
+	err := uq.db.Preload("Content.Comment").Preload("Content").Where("id = ?", id).First(&res).Error
 	if err != nil {
 		log.Println("query err", err.Error())
 		return user.Core{}, nil
 	}
-	hasil := user.Core{Content: []user.ContentCore{}}
-	hasil = DataToCore(res)
-	i := 0
-	for _, val := range res.Content {
-		hasil.Content[i].ID = val.ID
-		hasil.Content[i].Content = val.Content
-		hasil.Content[i].ContentImage = val.ContentImage
+	// Model:    gorm.Model{ID: data.ID},
+	// 	UserName: data.UserName,
+	// 	Bio:      data.Bio,
+	// 	Image:    data.Image,
+	// 	Content: ContentCore{
+	// 		ID:           data.Content.ID,
+	// 		Content:      data.Content.Content,
+	// 		ContentImage: data.Content.ContentImage,
+	// 		CreateAt:     data.Content.CreateAt,
+	// 		NumbComment:  data.Content.NumbComment,
+	// 	},
+	result := make(map[string]interface{})
+	result["id"] = res.ID
+	result["username"] = res.UserName
+	result["bio"] = res.Bio
+	result["profilepicture"] = res.Image
+	result["content"] = make([]map[string]interface{}, len(res.Content))
+	z := 0
+	for i, element := range res.Content {
+		m := make(map[string]interface{})
+		m["id"] = element.ID
+		m["content"] = element.Content
+		m["content_image"] = element.ContentImage
+		m["create_at"] = element.CreatedAt
+		m["comments"] = len(res.Content[z].Comment)
+		z++
+		result["content"].([]map[string]interface{})[i] = m
 	}
 
-	return hasil, nil
+	return result, nil
 }
 
 // Delete implements user.UserData
