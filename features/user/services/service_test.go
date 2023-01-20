@@ -2,6 +2,10 @@ package services
 
 import (
 	"errors"
+	"log"
+	"mime/multipart"
+	"os"
+	"path/filepath"
 	"sosmedapps/features/user"
 	"sosmedapps/helper"
 	"sosmedapps/mocks"
@@ -106,9 +110,9 @@ func TestLogin(t *testing.T) {
 
 func TestProfile(t *testing.T) {
 	repo := mocks.NewUserData(t)
+	resData := user.Core{ID: uint(1), Name: "Alif", Email: "alif@example.com", UserName: "alif123"}
 
 	t.Run("success show profile", func(t *testing.T) {
-		resData := user.Core{ID: uint(1), Name: "Alif", Email: "alif@example.com", UserName: "alif123"}
 
 		repo.On("Profile", 1).Return(resData, nil).Once()
 
@@ -121,7 +125,7 @@ func TestProfile(t *testing.T) {
 
 		res, err := srv.Profile(pToken)
 		assert.Nil(t, err)
-		assert.Equal(t, resData.ID, res)
+		assert.Equal(t, resData, res)
 		repo.AssertExpectations(t)
 	})
 
@@ -136,7 +140,7 @@ func TestProfile(t *testing.T) {
 		res, err := srv.Profile(pToken)
 		assert.NotNil(t, err)
 		assert.ErrorContains(t, err, "error")
-		assert.Equal(t, uint(0), res)
+		assert.Equal(t, user.Core{}, res)
 		repo.AssertExpectations(t)
 	})
 
@@ -151,52 +155,52 @@ func TestProfile(t *testing.T) {
 		res, err := srv.Profile(pToken)
 		assert.NotNil(t, err)
 		assert.ErrorContains(t, err, "server")
-		assert.Equal(t, uint(0), res)
+		assert.Equal(t, user.Core{}, res)
 		repo.AssertExpectations(t)
 	})
 }
 
-// func TestUpdate(t *testing.T) {
-// 	repo := mocks.NewUserData(t)
+func TestUpdate(t *testing.T) {
+	repo := mocks.NewUserData(t)
+	filePath := filepath.Join("..", "..", "..", "ERD.png")
+	// imageFalse, _ := os.Open(filePath)
+	// imageFalseCnv := &multipart.FileHeader{
+	// 	Filename: imageFalse.Name(),
+	// }
+	imageTrue, err := os.Open(filePath)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	imageTrueCnv := &multipart.FileHeader{
+		Filename: imageTrue.Name(),
+	}
+	inputData := user.Core{ID: 1, Name: "Alif", UserName: "alif123", Image: "ERD.png"}
+	resData := user.Core{ID: 1, Name: "Alif", UserName: "alif123", Image: imageTrueCnv.Filename}
+	t.Run("success updating account", func(t *testing.T) {
+		repo.On("Update", 1, inputData).Return(resData, nil).Once()
+		srv := New(repo)
+		_, token := helper.GenerateToken(1)
+		pToken := token.(*jwt.Token)
+		pToken.Valid = true
+		res, err := srv.Update(*imageTrueCnv, pToken, inputData)
+		assert.Nil(t, err)
+		assert.Equal(t, resData.ID, res.ID)
+		repo.AssertExpectations(t)
+	})
 
-// 	t.Run("success updating account", func(t *testing.T) {
-// 		inputData := user.Core{Name: "Alif", Email: "alif@example.com", UserName: "alif123"}
-
-// 		hash, _ := helper.GeneratePassword("alfian1221")
-// 		resData := user.Core{ID: uint(1),Name: "Alif", Email: "alif@example.com", UserName: "alif123", Password: hash}
-// 		repo.On("Update", uint(1), inputData).Return(resData, nil).Once()
-
-// 		srv := New(repo)
-
-// 		_, token := helper.GenerateToken(1)
-
-// 		pToken := token.(*jwt.Token)
-// 		pToken.Valid = true
-
-// 		res, err := srv.Update(pToken, inputData)
-// 		assert.Nil(t, err)
-// 		assert.Equal(t, resData.ID, res.ID)
-// 		repo.AssertExpectations(t)
-// 	})
-
-// 	t.Run("Not found", func(t *testing.T) {
-// 		inputData := user.Core{Name: "Alif", Email: "alif@example.com", UserName: "alif123"}
-// 		repo.On("Update", uint(2), inputData).Return(user.Core{}, errors.New("not found")).Once()
-
-// 		srv := New(repo)
-
-// 		_, token := helper.GenerateToken(2)
-
-// 		pToken := token.(*jwt.Token)
-// 		pToken.Valid = true
-
-// 		res, err := srv.Update(pToken, inputData)
-// 		assert.NotNil(t, err)
-// 		assert.ErrorContains(t, err, "tidak ditemukan")
-// 		assert.Equal(t, uint(0), res.ID)
-// 		repo.AssertExpectations(t)
-// 	})
-// }
+	t.Run("fail updating account", func(t *testing.T) {
+		repo.On("Update", 1, inputData).Return(user.Core{}, errors.New("query error,update fail")).Once()
+		srv := New(repo)
+		_, token := helper.GenerateToken(1)
+		pToken := token.(*jwt.Token)
+		pToken.Valid = true
+		res, err := srv.Update(*imageTrueCnv, pToken, inputData)
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "error")
+		assert.Equal(t, user.Core{}, res)
+		repo.AssertExpectations(t)
+	})
+}
 
 func TestDelete(t *testing.T) {
 	repo := mocks.NewUserData(t)
@@ -263,14 +267,32 @@ func TestLogout(t *testing.T) {
 	repo := mocks.NewUserData(t)
 
 	t.Run("success logout", func(t *testing.T) {
-		repo.On("Logout", 1).Return(user.Core{}).Once()
-
 		srv := New(repo)
-
 		_, err := srv.Logout()
 		assert.Nil(t, err)
 		// assert.ErrorContains(t, err, "sucess logout")
 		// repo.AssertExpectations(t)
+	})
+}
+func TestSearching(t *testing.T) {
+	repo := mocks.NewUserData(t)
+	resData := []user.Core{{ID: 1, Name: "eko", UserName: "koe"}}
+	t.Run("success Found", func(t *testing.T) {
+		repo.On("Searching", "eko").Return(resData, nil)
+		srv := New(repo)
+		res, err := srv.Searching("eko")
+		assert.Nil(t, err)
+		assert.Equal(t, resData[0].Name, res[0].Name)
+		repo.AssertExpectations(t)
+	})
+	t.Run("Not found", func(t *testing.T) {
+		repo.On("Searching", "").Return([]user.Core{}, errors.New("no user found"))
+		srv := New(repo)
+		res, err := srv.Searching("")
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "error")
+		assert.Equal(t, []user.Core{}, res)
+		repo.AssertExpectations(t)
 	})
 }
 

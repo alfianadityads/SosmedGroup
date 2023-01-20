@@ -144,7 +144,7 @@ func (uq *userQuery) Searching(quote string) ([]user.Core, error) {
 	err := uq.db.Where("email LIKE ?", "%"+quote+"%").Or("user_name LIKE ?", "%"+quote+"%").Find(&find).Error
 	if err != nil {
 		log.Println("no data processed", err.Error())
-		return []user.Core{}, errors.New("no user has delete")
+		return []user.Core{}, errors.New("no user found")
 	}
 	res := []user.Core{}
 	for i := 0; i < len(find); i++ {
