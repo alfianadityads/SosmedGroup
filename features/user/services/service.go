@@ -83,6 +83,21 @@ func (usc *userServiceCase) Update(formHeader multipart.FileHeader, userToken in
 		}
 		updateData.Password = hashingPassword
 	}
+	if formHeader.Size == 0 {
+		res, err := usc.qry.Update(id, updateData)
+		if err != nil {
+			log.Println("query error", err.Error())
+			if strings.Contains(err.Error(), "email duplicated") {
+				return user.Core{}, errors.New("email already used")
+			} else if strings.Contains(err.Error(), "username duplicated") {
+				return user.Core{}, errors.New("username already used")
+			} else {
+				return user.Core{}, errors.New("query error, update fail")
+			}
+		}
+
+		return res, nil
+	}
 	//-------------ImageProses--------------
 	//validasi size
 	if formHeader.Size > 500000 {

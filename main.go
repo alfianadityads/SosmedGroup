@@ -64,7 +64,7 @@ func main() {
 	// COMMENT
 	e.POST("/comments/:id", cmHdl.NewComment(), middleware.JWT([]byte(config.JWTKey)))
 	e.DELETE("/comments/:id", cmHdl.Delete(), middleware.JWT([]byte(config.JWTKey)))
-	e.GET("/comments/all", cmHdl.GetCom())
+	// e.GET("/comments/all", cmHdl.GetCom())
 
 	// e.POST("/remote", helper.RemoteUpload)
 	// ========== Run Program ===========

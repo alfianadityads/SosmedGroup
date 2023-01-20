@@ -34,7 +34,7 @@ func (css *commentServiceCase) Delete(token interface{}, commentID uint) error {
 	userID := helper.ExtractToken(token)
 	err := css.qry.Delete(uint(userID), commentID)
 	if err != nil {
-		log.Println("query error")
+		log.Println("query error", err.Error())
 		if strings.Contains(err.Error(), "cannot") {
 			return errors.New("you are not allowed delete other people comment")
 		}
@@ -43,12 +43,12 @@ func (css *commentServiceCase) Delete(token interface{}, commentID uint) error {
 	return nil
 }
 
-// GetCom implements comment.CommentService
-func (csc *commentServiceCase) GetCom() ([]comment.Core, error) {
-	res, err := csc.qry.GetCom()
-	if err != nil {
-		log.Println("query error", err.Error())
-		return []comment.Core{}, errors.New("server error, cannot query data")
-	}
-	return res, nil
-}
+// // GetCom implements comment.CommentService
+// func (csc *commentServiceCase) GetCom() ([]comment.Core, error) {
+// 	res, err := csc.qry.GetCom()
+// 	if err != nil {
+// 		log.Println("query error", err.Error())
+// 		return []comment.Core{}, errors.New("server error, cannot query data")
+// 	}
+// 	return res, nil
+// }
