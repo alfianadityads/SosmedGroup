@@ -24,26 +24,27 @@ func (csc *contentServiceCase) AddContent(token interface{}, formHeader multipar
 	userID := helper.ExtractToken(token)
 	// image prosses
 	//validasi size
-	if formHeader.Size > 500000 {
-		return contents.CoreContent{}, errors.New("size error")
+	if formHeader.Size != 0 {
+		if formHeader.Size > 500000 {
+			return contents.CoreContent{}, errors.New("size error")
+		}
+		//get file from header to check type
+		formFile, err := formHeader.Open()
+		if err != nil {
+			return contents.CoreContent{}, errors.New("error open formheader")
+		}
+		// Validasi Type
+		if !helper.TypeFile(formFile) {
+			return contents.CoreContent{}, errors.New("file type error")
+		}
+		defer formFile.Close()
+		formFile, _ = formHeader.Open()
+		uploadUrl, err := helper.NewMediaUpload().FileUpload(helper.File{File: formFile})
+		if err != nil {
+			return contents.CoreContent{}, errors.New("server error")
+		}
+		newContent.ContentImage = uploadUrl
 	}
-	//get file from header to check type
-	formFile, err := formHeader.Open()
-	if err != nil {
-		return contents.CoreContent{}, errors.New("error open formheader")
-	}
-	// Validasi Type
-	if !helper.TypeFile(formFile) {
-		return contents.CoreContent{}, errors.New("file type error")
-	}
-	defer formFile.Close()
-	formFile, _ = formHeader.Open()
-	uploadUrl, err := helper.NewMediaUpload().FileUpload(helper.File{File: formFile})
-	if err != nil {
-		return contents.CoreContent{}, errors.New("server error")
-	}
-	newContent.ContentImage = uploadUrl
-
 	//input ke query proses
 	res, err := csc.qry.AddContent(uint(userID), newContent)
 	if err != nil {
