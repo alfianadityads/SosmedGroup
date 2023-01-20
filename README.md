@@ -25,7 +25,7 @@ This is a golang rest api project group organized by Alterra Academy. This API i
 - Show profile
 - Edit profile
 - Search another users
-- Dactive account
+- Deactive account
 
 <div>
   
@@ -60,7 +60,7 @@ This is a golang rest api project group organized by Alterra Academy. This API i
 - Delete comment
 
 # ERD
-<img src="image/ERD.png">
+<img src="ERD.png">
 
 # API Documentations
 
