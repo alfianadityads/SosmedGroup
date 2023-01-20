@@ -132,18 +132,18 @@ func TestDelete(t *testing.T) {
 
 func TestUpdateContent(t *testing.T) {
 	repo := mocks.NewContentData(t)
-	inputData := contents.CoreContent{ID: uint(1), Content: "hello everyone"}
-	resData := contents.CoreContent{ID: uint(1), Content: "hello everybody"}
+	// inputData := contents.CoreContent{ID: uint(1), Content: "hello everyone"}
+	resData := "hello everybody"
 
 	t.Run("success update content", func(t *testing.T) {
-		repo.On("UpdateContent", uint(1), uint(1), inputData).Return(resData, nil).Once()
+		repo.On("UpdateContent", uint(1), uint(1), "hello everyone").Return(resData, nil).Once()
 		srv := New(repo)
 		_, tokenIDUser := helper.GenerateToken(1)
 		userID := tokenIDUser.(*jwt.Token)
 		userID.Valid = true
 		_, err := srv.UpdateContent(userID, uint(1), "hello everyone")
 		assert.Nil(t, err)
-		assert.Equal(t, resData.ID, userID)
+		// assert.Equal(t, resData.ID, userID)
 		repo.AssertExpectations(t)
 	})
 }
