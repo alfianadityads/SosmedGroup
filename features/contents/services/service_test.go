@@ -129,17 +129,6 @@ func TestDelete(t *testing.T) {
 		repo.AssertExpectations(t)
 	})
 }
-import (
-	"errors"
-	"sosmedapps/features/contents"
-	"sosmedapps/helper"
-	"sosmedapps/mocks"
-	"testing"
-
-	"github.com/golang-jwt/jwt"
-	"github.com/stretchr/testify/assert"
-)
-
 func TestDelete(t *testing.T) {
 	repo := mocks.NewContentData(t)
 
@@ -155,7 +144,6 @@ func TestDelete(t *testing.T) {
 		repo.AssertExpectations(t)
 	})
 
-
 	t.Run("internal server error", func(t *testing.T) {
 		repo.On("DeleteContent", uint(1), uint(1)).Return(errors.New("server error")).Once()
 		srv := New(repo)
@@ -170,11 +158,10 @@ func TestDelete(t *testing.T) {
 	})
 }
 
-
 func TestUpdateContent(t *testing.T) {
 	repo := mocks.NewContentData(t)
 	inputData := contents.CoreContent{ID: uint(1), Content: "hello everyone"}
-	resData := contents.CoreContent{ID: uint(1),Content: "hello everybody"}
+	resData := contents.CoreContent{ID: uint(1), Content: "hello everybody"}
 
 	t.Run("success update content", func(t *testing.T) {
 		repo.On("UpdateContent", uint(1), uint(1), inputData).Return(resData, nil).Once()
