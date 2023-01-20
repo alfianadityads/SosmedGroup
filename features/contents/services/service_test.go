@@ -129,34 +129,6 @@ func TestDelete(t *testing.T) {
 		repo.AssertExpectations(t)
 	})
 }
-func TestDelete(t *testing.T) {
-	repo := mocks.NewContentData(t)
-
-	t.Run("success delete content", func(t *testing.T) {
-		repo.On("DeleteContent", uint(1), uint(1)).Return(nil).Once()
-
-		srv := New(repo)
-		_, token := helper.GenerateToken(1)
-		pToken := token.(*jwt.Token)
-		pToken.Valid = true
-		err := srv.DeleteContent(pToken, 1)
-		assert.Nil(t, err)
-		repo.AssertExpectations(t)
-	})
-
-	t.Run("internal server error", func(t *testing.T) {
-		repo.On("DeleteContent", uint(1), uint(1)).Return(errors.New("server error")).Once()
-		srv := New(repo)
-
-		_, token := helper.GenerateToken(1)
-		pToken := token.(*jwt.Token)
-		pToken.Valid = true
-		err := srv.DeleteContent(pToken, 1)
-		assert.NotNil(t, err)
-		assert.ErrorContains(t, err, "server error")
-		repo.AssertExpectations(t)
-	})
-}
 
 func TestUpdateContent(t *testing.T) {
 	repo := mocks.NewContentData(t)
